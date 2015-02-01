@@ -36,7 +36,6 @@ public class ThreadPoolServer {
                 client2Socket = this.serverSocket.accept();
                 threadPool.execute( new Partida(client1Socket,client2Socket));
                 
-                
             } catch (IOException e) {
                 if(isStopped()) {
                     System.out.println("Server Stopped.") ;
