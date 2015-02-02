@@ -29,7 +29,6 @@ public class Mensaje {
     }
 
     
-    
     public int getTipoMensaje() {
         return tipoMensaje;
     }

@@ -33,6 +33,11 @@ public class Cliente {
         cliente = new Socket(InetAddress.getByName(ip), puerto);
     }
     
+    public void inicializarFlujos() throws IOException {
+            obos = new ObjectOutputStream(cliente.getOutputStream());
+            obis = new ObjectInputStream(cliente.getInputStream());
+    }
+    
     public void enviarMensaje(Mensaje mensaje) throws IOException{
         byte[] mensajeBytes = Utileria.serailizarObjeto(mensaje);
         obos.write(mensajeBytes);
