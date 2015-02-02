@@ -4,12 +4,14 @@
  */
 package batallanaval.utileria;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Isaac
  */
 
-public class Mensaje {
+public class Mensaje implements Serializable{
     int tipoMensaje;
     int coorX;
     int coorY;
@@ -85,5 +87,9 @@ public class Mensaje {
         this.banderaEstadoConexion = banderaEstadoConexion;
     }
     
-    
+    @Override
+    public String toString(){
+        return "Tipo mensaje: " + tipoMensaje + " coorX: " + coorX + " coorY: " + coorY + " BanderaAcertado: " + banderaAcertado + " BanderaVictoria: " + banderaVictoria + " BanderaEstadoConexion: " + banderaEstadoConexion;
+    }
+
 }
