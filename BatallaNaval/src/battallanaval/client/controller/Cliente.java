@@ -1,6 +1,7 @@
 package battallanaval.client.controller;
 
 import batallanaval.utileria.Mensaje;
+import batallanaval.utileria.Utileria;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -26,17 +27,22 @@ public class Cliente {
     public Cliente(int puerto, String ip){
       this.puerto = puerto;
       this.ip = ip;
-      
     }
     
     public void conectarAServidor() throws UnknownHostException, IOException{
         cliente = new Socket(InetAddress.getByName(ip), puerto);
     }
     
-    public void enviarMensaje(Mensaje mensaje){
-        
+    public void enviarMensaje(Mensaje mensaje) throws IOException{
+        byte[] mensajeBytes = Utileria.serailizarObjeto(mensaje);
+        obos.write(mensajeBytes);
+        obos.flush();
     }
     
+    public void recibirMensaje(){
+    
+    
+    }
     
     
 }

@@ -8,6 +8,7 @@ package batallanaval.utileria;
  *
  * @author Isaac
  */
+
 public class Mensaje {
     int tipoMensaje;
     int coorX;
