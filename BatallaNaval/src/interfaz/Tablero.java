@@ -19,14 +19,17 @@ public class Tablero extends javax.swing.JFrame {
         initComponents();
         crearMatrizFlota(jPanel1, 1);
         crearMatrizFlota(jPanel3, 0);
+    }
 
+    public void arrancarTablero(){
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Tablero().setVisible(true);
             }
         });
+    
     }
-
+    
     private void crearMatrizFlota(JPanel jpanel, int tipo) {
         jpanel.setLayout(new java.awt.GridLayout(15, 15));
         JButton[][] flota;

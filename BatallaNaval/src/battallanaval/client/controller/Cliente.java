@@ -17,9 +17,9 @@ import java.util.ArrayList;
  *
  * @author Isaac
  */
-public class Cliente{
+public class Cliente extends Thread{
 
-    private Socket cliente = null;
+    private Socket socketCliente = null;
     private String ip = "";
     private int puerto;
     private ObjectOutputStream obos=null;
@@ -28,29 +28,30 @@ public class Cliente{
     private ByteArrayInputStream bais;
     private int turno;
     private ArrayList<String> listaPosicionesBarcos;
-    private Tablero tablero;
+    private Tablero tablero = null;
 
     public Cliente(int puerto, String ip) {
         this.puerto = puerto;
         this.ip = ip;
     }
 
+    @Override
     public void run() {
         try {
             //Conectarse al servidor.
-            conectarAServidor();
+            this.conectarAServidor();
         } catch (IOException ex) {
             System.err.println("Error al conectarse con el servidor");
         }
         try {
             //Inicializar flujos
-            inicializarFlujos();
+            this.inicializarFlujos();
         } catch (IOException ex) {
             System.err.print("Error al inicializar flujos");
         }
         try {
             //Ejecutar interfaz
-            ejecutarTablero();
+            this.ejecutarTablero();
         } catch (Exception ex) {
             System.err.println("Ocurrio un error al intentar cargar el tablero:" + ex.getMessage());
         }
@@ -94,15 +95,15 @@ public class Cliente{
     }
 
     public void conectarAServidor() throws UnknownHostException, IOException {
-        System.out.print("Conectando a servidor...");
-        cliente = new Socket(InetAddress.getByName(ip), puerto);//InetAddress.getByName(ip), puerto);
+        System.out.println("Conectando a servidor...");
+        socketCliente = new Socket(InetAddress.getByName(ip), puerto);//InetAddress.getByName(ip), puerto);
         System.out.println("[OK]");
     }
 
     public void inicializarFlujos() throws IOException {
-        System.out.print("Inicializando flujos...");
-        obis = new ObjectInputStream(cliente.getInputStream());
-        obos = new ObjectOutputStream(cliente.getOutputStream());
+        System.out.println("Inicializando flujos...");
+        obis = new ObjectInputStream(socketCliente.getInputStream());
+        obos = new ObjectOutputStream(socketCliente.getOutputStream());
         System.out.println("[OK]");
     }
 
@@ -114,7 +115,7 @@ public class Cliente{
     }
 
     public int recibirTurno() throws IOException {
-        System.out.print("Recibiendo turno...");
+        System.out.println("Recibiendo turno...");
         if (obis.readBoolean()) {
             System.out.print("[OK]");
             return 1;
@@ -151,6 +152,9 @@ public class Cliente{
     }
 
     private void ejecutarTablero() {
+        System.out.println("Ejecutando tablero...");
         tablero = new Tablero();
+        tablero.arrancarTablero();
+        System.out.println("[OK]");
     }
 }//clase

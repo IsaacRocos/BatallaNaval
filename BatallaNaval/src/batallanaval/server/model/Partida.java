@@ -26,6 +26,7 @@ public class Partida implements Runnable {
     private ObjectOutputStream out_1, out_2;
 
     public Partida(Socket player1, Socket player2) {
+        System.out.println("<p>Inicializando elementos de partida...");
         this.player1 = player1;
         this.player2 = player2;
         derribados1 = 0;
@@ -36,13 +37,14 @@ public class Partida implements Runnable {
         in_2 = null;
         out_1 = null;
         out_2 = null;
+        System.out.println("<p>[OK]");
     }
 
     @Override
     public void run() {
         try {
+            System.out.println("<p>Arrancando partida...");
             inicializarFlujos();
-
             //Envia turno habilitado al primer socket conectado.
             out_1.writeBoolean(true);
             out_1.flush();
@@ -131,13 +133,15 @@ public class Partida implements Runnable {
     }
 
     private void inicializarFlujos() {
+        System.out.println("<p>Inicializando flujos en partida...");
         try {
-            in_1 = new ObjectInputStream(player1.getInputStream());
-            out_1 = new ObjectOutputStream(player1.getOutputStream());
             in_2 = new ObjectInputStream(player2.getInputStream());
             out_2 = new ObjectOutputStream(player2.getOutputStream());
+            in_1 = new ObjectInputStream(player1.getInputStream());
+            out_1 = new ObjectOutputStream(player1.getOutputStream());
+            
         } catch (IOException ex) {
-            Logger.getLogger(Partida.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("<p>Problemas al inicializar flujos");
         }
     }
 }

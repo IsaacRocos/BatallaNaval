@@ -27,33 +27,33 @@ public class ThreadPoolServer{
         synchronized (this) {
             this.runningThread = Thread.currentThread();
         }
-        System.out.print("Iniciando servidor...");
+        System.out.print("<s>Iniciando servidor...");
         openServerSocket();
-        System.out.println("[OK]");
+        System.out.println("<s>[OK]");
 
         while (!isStopped()) {
             Socket client1Socket = null;
             Socket client2Socket = null;
             try {
-                System.out.print("Esperando Jugador 1...");
+                System.out.print("<s>Esperando Jugador 1...");
                 client1Socket = this.serverSocket.accept();
-                System.out.println("[OK]");
-                System.out.print("Esperando Jugador 2...");
+                System.out.println("<s>[OK]");
+                System.out.print("<s>Esperando Jugador 2...");
                 client2Socket = this.serverSocket.accept();
-                System.out.println("[OK]");
-                System.out.print("Iniciando partida...");
+                System.out.println("<s>[OK]");
+                System.out.println("<s>Creando partida...");
                 threadPool.execute(new Partida(client1Socket, client2Socket));
-                System.out.println("[OK]");
+                System.out.println("<s>[OK]");
             } catch (IOException e) {
                 if (isStopped()) {
-                    System.out.println("Server detenido.");
+                    System.out.println("<s>Server detenido.");
                     break;
                 }
-                throw new RuntimeException("Error al establecer conexion con jugador ", e);
+                throw new RuntimeException("<s>Error al establecer conexion con jugador ", e);
             }
         }
         this.threadPool.shutdown();
-        System.out.println("Servidor detenido.");
+        System.out.println("<s>Servidor detenido.");
     }
 
     private synchronized boolean isStopped() {
@@ -64,7 +64,7 @@ public class ThreadPoolServer{
         try {
             this.serverSocket.close();
         } catch (IOException e) {
-            throw new RuntimeException("Error deteniendo servidor.", e);
+            throw new RuntimeException("<s>Error deteniendo servidor.", e);
         }
         this.isStopped = true;
     }
@@ -73,7 +73,7 @@ public class ThreadPoolServer{
         try {
             this.serverSocket = new ServerSocket(this.serverPort);
         } catch (IOException e) {
-            throw new RuntimeException("Error no se puede abrir puerto.", e);
+            throw new RuntimeException("<s>Error no se puede abrir puerto.", e);
         }
     }
 }
