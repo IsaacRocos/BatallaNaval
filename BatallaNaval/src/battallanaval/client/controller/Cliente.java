@@ -9,8 +9,6 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -25,7 +23,7 @@ public class Cliente {
     private ObjectInputStream obis;
     private ByteArrayOutputStream baos;
     private ByteArrayInputStream bais;
-    private boolean turno;
+    private int turno;
 
     public Cliente(int puerto, String ip) {
         this.puerto = puerto;
@@ -46,24 +44,25 @@ public class Cliente {
             System.err.print("Error al inicializar flujos");
         }
         turno = recibirTurno();
-        while (true) {
+        while (turno != -1) {
             //Recibo turno
-            if (turno) {
-                //Desbloqueo mapa de disparo.
-                //Creo mensaje a partir de lo seleccionado en la IU.
-                //Envio disparo
-                //Recibo confirmacion.
-                //Verifico bandera victoria.
-                //turno = false;
-            } else {
-                // Bloqueo mapa de disparo.
-                // Recibo disparo.
-                // Envio confirmacion.
-                // Recibo y verifico mensaje derrota.
-                // Si pierdo rompo ciclo. Si no turno = true;
+            switch (turno) {
+                case 1:
+                    //Desbloqueo mapa de disparo.
+                    //Creo mensaje a partir de lo seleccionado en la IU.
+                    //Envio disparo
+                    //Recibo confirmacion.
+                    //Verifico bandera victoria. Si gano turno = -1 sino turno = 0;
+                    break;
+                case 0:
+                    // Bloqueo mapa de disparo.
+                    // Recibo disparo.
+                    // Envio confirmacion.
+                    // Recibo y verifico mensaje derrota.
+                    // Si pierdo rompo ciclo turno = -1. Si no turno = 1;
+                    break;
             }
         }
-
     }
 
     public void conectarAServidor() throws UnknownHostException, IOException {
@@ -83,15 +82,17 @@ public class Cliente {
         obos.flush();
     }
 
-    public boolean recibirTurno() {
-
+    public int recibirTurno() {
         try {
-            return obis.readBoolean();
+            if (obis.readBoolean()) {
+                return 1;
+            } else {
+                return 0;
+            }
         } catch (IOException ex) {
             System.err.println("Error al recibir turno");
+            return -1;
         }
-
-        return false;
     }
 
     public Mensaje recibirMensaje() {
