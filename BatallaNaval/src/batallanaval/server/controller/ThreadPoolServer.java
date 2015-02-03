@@ -41,7 +41,9 @@ public class ThreadPoolServer {
                 System.out.print("Esperando Jugador 2...");
                 client2Socket = this.serverSocket.accept();
                 System.out.println("[OK]");
+                System.out.print("Iniciando partida...");
                 threadPool.execute(new Partida(client1Socket, client2Socket));
+                System.out.println("[OK]");
             } catch (IOException e) {
                 if (isStopped()) {
                     System.out.println("Server detenido.");
@@ -51,7 +53,7 @@ public class ThreadPoolServer {
             }
         }
         this.threadPool.shutdown();
-        System.out.println("Server detenido.");
+        System.out.println("Servidor detenido.");
     }
 
     private synchronized boolean isStopped() {
@@ -62,7 +64,7 @@ public class ThreadPoolServer {
         try {
             this.serverSocket.close();
         } catch (IOException e) {
-            throw new RuntimeException("Error deteniendo server.", e);
+            throw new RuntimeException("Error deteniendo servidor.", e);
         }
         this.isStopped = true;
     }
