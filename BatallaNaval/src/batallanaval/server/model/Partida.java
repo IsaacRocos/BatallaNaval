@@ -61,7 +61,7 @@ public class Partida implements Runnable {
                     turno = true;
                 }
             }
-            enviarDerrota(out_1,out_2);
+            enviarDerrota(out_1, out_2);
             out_1.close();
             in_1.close();
             out_2.close();
@@ -93,11 +93,13 @@ public class Partida implements Runnable {
             msj.setBanderaVictoria(true);
         }
     }
-/**
- * Envia mensaje de derrota al jugador con el turno activo.
- * @param p1
- * @param p2 
- */
+
+    /**
+     * Envia mensaje de derrota al jugador con el turno activo.
+     *
+     * @param p1
+     * @param p2
+     */
     private void enviarDerrota(ObjectOutputStream p1, ObjectOutputStream p2) {
         msj = new Mensaje();
         msj.setBanderaDerrota(true);
