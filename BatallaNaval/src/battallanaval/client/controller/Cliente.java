@@ -11,26 +11,36 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Isaac
  */
-public class Cliente extends Thread{
+public class Cliente extends Thread {
 
     private Socket socketCliente = null;
     private String ip = "";
     private int puerto;
-    private ObjectOutputStream obos=null;
-    private ObjectInputStream obis=null;
+    private ObjectOutputStream obos = null;
+    private ObjectInputStream obis = null;
     private ByteArrayOutputStream baos;
+
+    public ObjectOutputStream getObos() {
+        return obos;
+    }
+
+    public ObjectInputStream getObis() {
+        return obis;
+    }
     private ByteArrayInputStream bais;
     private int turno;
     private ArrayList<String> listaPosicionesBarcos;
-    private Tablero tablero = null;
+    private Tablero tablero;
 
     public Cliente(int puerto, String ip) {
+        this.tablero = null;
         this.puerto = puerto;
         this.ip = ip;
     }
@@ -49,36 +59,37 @@ public class Cliente extends Thread{
         } catch (IOException ex) {
             System.err.print("Error al inicializar flujos");
         }
-        try {
-            //Ejecutar interfaz
-            this.ejecutarTablero();
-        } catch (Exception ex) {
-            System.err.println("Ocurrio un error al intentar cargar el tablero:" + ex.getMessage());
-        }
-        try {
+        try { //recibir turno inicial
             turno = recibirTurno();
         } catch (IOException ex) {
             System.err.println("Error al recibir turno");
             turno = -1;
         }
+        System.out.println("Turno recibido:" + turno);
         while (turno != -1) {
             //Recibo turno
             switch (turno) {
                 case 1:
                     //Desbloqueo mapa de disparo.
+                    System.out.println("<C>Preparandose para disparar...");
                     tablero.cambiarBloqueoDeBotones(2, 1);
-                    //Creo mensaje a partir de lo seleccionado en la IU.
+                    System.out.println("<C>Esperando a interfaz");
                     synchronized (tablero) {
                         try {
                             tablero.wait();
                         } catch (InterruptedException ex) {
-                            System.err.println("Ocurrio un problema mientras se esperaba disparo");
-                        }catch(Exception ex){
-                            System.out.println("Ocurrio un problema noesperado mientras se esperaba disparo" + ex.getMessage());
+                            System.out.println("<C>Espera interrumpida");
                         }
                     }
-                    System.out.println("LISTO!!!");
-                    //Envio disparo
+                    System.out.println("<C>Interfaz lista");
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        System.out.println("<C>Espera interrumpida en lectura");
+                    }
+
+                    
+
                     //Recibo confirmacion.
                     //Verifico bandera victoria. Si gano turno = -1 si no turno = 0;
                     break;
@@ -92,6 +103,7 @@ public class Cliente extends Thread{
                     break;
             }
         }
+
     }
 
     public void conectarAServidor() throws UnknownHostException, IOException {
@@ -102,8 +114,9 @@ public class Cliente extends Thread{
 
     public void inicializarFlujos() throws IOException {
         System.out.println("Inicializando flujos...");
-        obis = new ObjectInputStream(socketCliente.getInputStream());
         obos = new ObjectOutputStream(socketCliente.getOutputStream());
+        obos.flush();
+        obis = new ObjectInputStream(socketCliente.getInputStream());
         System.out.println("[OK]");
     }
 
@@ -130,31 +143,45 @@ public class Cliente extends Thread{
         try {
             mensaje = (Mensaje) obis.readObject();
         } catch (IOException ex) {
-            System.err.println("Error al recibir mensje");
+            System.err.println("<C>Error al recibir mensje");
             return null;
         } catch (ClassNotFoundException ex) {
-            System.err.println("El objeto recibido no es de tipo Mensaje");
+            System.err.println("<C>El objeto recibido no es de tipo Mensaje");
             return null;
         }
         return mensaje;
     }
 
     public boolean esperarTurno() {
-        while (true) {
-            try {
-                Mensaje mensaje = recibirMensaje();
-                if (mensaje.getTipoMensaje() == 2) {  //recibe disparo
-                    return true; // la siguiente secuencia se sigue en la interfaz
-                }
-            } catch (Exception e) {
-            }
-        }
+        return false;
     }
 
     private void ejecutarTablero() {
         System.out.println("Ejecutando tablero...");
         tablero = new Tablero();
+        tablero.setCliente(this);
         tablero.arrancarTablero();
         System.out.println("[OK]");
+    }
+
+    public void setTablero(Tablero aThis) {
+        this.tablero = aThis;
+    }
+
+    public void disparar(int x, int y) {
+        Mensaje disparo = crearDisparo(x, y);
+        try {
+            enviarMensaje(disparo);
+        } catch (IOException ex) {
+            System.out.println("<C>Error al disparar");
+        }
+        synchronized(tablero){
+            tablero.notifyAll();
+        }
+    }
+
+    public Mensaje crearDisparo(int x, int y) {
+        return new Mensaje(x, y);
+
     }
 }//clase

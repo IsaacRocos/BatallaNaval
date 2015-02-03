@@ -34,15 +34,18 @@ public class ThreadPoolServer{
         while (!isStopped()) {
             Socket client1Socket = null;
             Socket client2Socket = null;
+            Partida partida = new Partida();
             try {
                 System.out.print("<s>Esperando Jugador 1...");
                 client1Socket = this.serverSocket.accept();
+                partida.setJugador(client1Socket, 1);
                 System.out.println("<s>[OK]");
                 System.out.print("<s>Esperando Jugador 2...");
                 client2Socket = this.serverSocket.accept();
+                partida.setJugador(client2Socket, 2);
                 System.out.println("<s>[OK]");
-                System.out.println("<s>Creando partida...");
-                threadPool.execute(new Partida(client1Socket, client2Socket));
+                System.out.println("<s>Jugadores completos [OK].Atendiendo partida...");
+                threadPool.execute(partida);
                 System.out.println("<s>[OK]");
             } catch (IOException e) {
                 if (isStopped()) {

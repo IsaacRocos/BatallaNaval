@@ -22,13 +22,11 @@ public class Partida implements Runnable {
     private int derribados1;
     private int derribados2;
     private Mensaje msj;
-    private ObjectInputStream in_1, in_2;
-    private ObjectOutputStream out_1, out_2;
+    private ObjectInputStream in_1, in_2 = null;
+    private ObjectOutputStream out_1, out_2 = null;
+    private boolean banderaEsperandoJugador = false;
 
-    public Partida(Socket player1, Socket player2) {
-        System.out.println("<p>Inicializando elementos de partida...");
-        this.player1 = player1;
-        this.player2 = player2;
+        public Partida() {
         derribados1 = 0;
         derribados2 = 0;
         turno = true;
@@ -37,25 +35,42 @@ public class Partida implements Runnable {
         in_2 = null;
         out_1 = null;
         out_2 = null;
-        System.out.println("<p>[OK]");
+        banderaEsperandoJugador = true;
+    }
+
+    public void setJugador(Socket player, int numJugador) {
+        System.out.println("<p>Inicializando elementos de partida para jugador nuevo...");
+        if (numJugador == 1) {
+            this.player1 = player;
+            banderaEsperandoJugador = true;
+        } else {
+            this.player2 = player;
+            banderaEsperandoJugador = false;
+        }
+        inicializarFlujo(numJugador);
+        if (banderaEsperandoJugador == false) {
+            System.out.println("<p>[OK] partida por comenzar");
+        }
     }
 
     @Override
     public void run() {
         try {
             System.out.println("<p>Arrancando partida...");
-            inicializarFlujos();
             //Envia turno habilitado al primer socket conectado.
             out_1.writeBoolean(true);
             out_1.flush();
             out_2.writeBoolean(false);
             out_2.flush();
+            if(in_1.readBoolean()){
+                out_2.writeBoolean(true);
+            }
             while (!finPartida) {
                 if (turno) {
                     //Jugador 1.
-                    out_2.writeObject(in_1.readObject()); // Jugador 1 dispara
+                    out_2.writeObject(in_1.readObject()); // Jugador 1 dispara y jugador 2 recibe
                     out_2.flush();
-
+               
                     // Jugador 2 confirma
                     msj = (Mensaje) in_2.readObject();
                     verificarFinDePartida();
@@ -74,9 +89,8 @@ public class Partida implements Runnable {
                     out_2.flush();
                     turno = true;
                 }
-                
             }
-            
+            //Fin de partida
             out_1.close();
             in_1.close();
             out_2.close();
@@ -107,7 +121,7 @@ public class Partida implements Runnable {
             finPartida = true;
             msj.setBanderaVictoria(true);
             enviarDerrota(true);
-        }else{
+        } else {
             enviarDerrota(false);
         }
     }
@@ -132,14 +146,20 @@ public class Partida implements Runnable {
         }
     }
 
-    private void inicializarFlujos() {
-        System.out.println("<p>Inicializando flujos en partida...");
+    private void inicializarFlujo(int numJugador) {
         try {
-            in_2 = new ObjectInputStream(player2.getInputStream());
-            out_2 = new ObjectOutputStream(player2.getOutputStream());
-            in_1 = new ObjectInputStream(player1.getInputStream());
-            out_1 = new ObjectOutputStream(player1.getOutputStream());
-            
+            if (numJugador == 2) {
+                System.out.println("<p>Inicializando flujos de jugador 2 ...");
+                out_2 = new ObjectOutputStream(player2.getOutputStream());
+                out_2.flush();
+                in_2 = new ObjectInputStream(player2.getInputStream());
+            } else {
+                System.out.println("<p>Inicializando flujos de jugador 1 ...");
+                out_1 = new ObjectOutputStream(player1.getOutputStream());
+                out_1.flush();
+                in_1 = new ObjectInputStream(player1.getInputStream());
+            }
+
         } catch (IOException ex) {
             System.out.println("<p>Problemas al inicializar flujos");
         }

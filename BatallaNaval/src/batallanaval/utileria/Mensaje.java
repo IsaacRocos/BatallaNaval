@@ -12,7 +12,6 @@ import java.io.Serializable;
  */
 public class Mensaje implements Serializable {
 
-    int tipoMensaje;
     int coorX;
     int coorY;
     boolean banderaAcertado;
@@ -21,9 +20,26 @@ public class Mensaje implements Serializable {
     private boolean banderaDerrota;
     boolean banderaEstadoConexion;
     
-    public Mensaje(){}
-    public Mensaje(int tipoMensaje, int coorX, int coorY, boolean banderaAcertado, boolean banderaDerribado, boolean banderaVictoria, boolean banderaEstadoConexion) {
-        this.tipoMensaje = tipoMensaje;
+    public Mensaje(){
+        this.coorX=0;
+        this.coorY=0;
+        banderaAcertado = false;
+        banderaDerribado= false;
+        banderaVictoria= false;
+        banderaDerrota= false;
+        banderaEstadoConexion= true;
+    }
+    
+    public Mensaje(int coorX, int coorY){
+        this.coorX=coorX;
+        this.coorY=coorY;
+        banderaAcertado = false;
+        banderaDerribado= false;
+        banderaVictoria= false;
+        banderaDerrota= false;
+        banderaEstadoConexion= true;
+    }
+    public Mensaje(int coorX, int coorY, boolean banderaAcertado, boolean banderaDerribado, boolean banderaVictoria, boolean banderaEstadoConexion) {
         this.coorX = coorX;
         this.coorY = coorY;
         this.banderaAcertado = banderaAcertado;
@@ -32,13 +48,6 @@ public class Mensaje implements Serializable {
         this.banderaEstadoConexion = banderaEstadoConexion;
     }
 
-    public int getTipoMensaje() {
-        return tipoMensaje;
-    }
-
-    public void setTipoMensaje(int tipoMensaje) {
-        this.tipoMensaje = tipoMensaje;
-    }
 
     public int getCoorX() {
         return coorX;
@@ -98,7 +107,7 @@ public class Mensaje implements Serializable {
 
     @Override
     public String toString() {
-        return "Tipo mensaje: " + tipoMensaje + " coorX: " + coorX + " coorY: " + coorY + " BanderaAcertado: " + banderaAcertado + " BanderaVictoria: " + banderaVictoria + " BanderaEstadoConexion: " + banderaEstadoConexion;
+        return  "<Mensaje> coorX: " + coorX + " coorY: " + coorY + " BanderaAcertado: " + banderaAcertado + " BanderaVictoria: " + banderaVictoria + " BanderaEstadoConexion: " + banderaEstadoConexion;
     }
 
 }

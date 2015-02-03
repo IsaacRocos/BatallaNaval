@@ -17,7 +17,7 @@ public class PruebaFlujos {
         try {
             c.conectarAServidor();
             c.inicializarFlujos();
-            c.enviarMensaje(new Mensaje(1, 23, 23, true, true, true, true));
+            c.enviarMensaje(new Mensaje(23, 23, true, true, true, true));
         } catch (UnknownHostException ex) {
             System.err.println("error UHE");
         } catch (IOException ex) {   
