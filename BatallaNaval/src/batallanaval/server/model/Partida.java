@@ -83,10 +83,12 @@ public class Partida implements Runnable {
      * @param jugador true si es jugador 1 y false si es jugador 2.
      */
     private void verificaFinDePartida(Mensaje msj) {
-        if (msj.getBanderaDerribado() && turno) {
-            derribados1++;
-        } else {
-            derribados2++;
+        if (msj.getBanderaDerribado()) {
+            if (turno) {
+                derribados1++;
+            } else {
+                derribados2++;
+            }
         }
         if (derribados1 == totalEmbarcaciones || derribados2 == totalEmbarcaciones) {
             finPartida = true;
