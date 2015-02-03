@@ -43,7 +43,12 @@ public class Cliente {
         } catch (IOException ex) {
             System.err.print("Error al inicializar flujos");
         }
-        turno = recibirTurno();
+        try {
+            turno = recibirTurno();
+        } catch (IOException ex) {
+            System.err.println("Error al recibir turno");
+            turno = -1;
+        }
         while (turno != -1) {
             //Recibo turno
             switch (turno) {
@@ -66,32 +71,33 @@ public class Cliente {
     }
 
     public void conectarAServidor() throws UnknownHostException, IOException {
-        System.out.println("Conectando a servidor...");
+        System.out.print("Conectando a servidor...");
         cliente = new Socket(InetAddress.getByName(ip), puerto);//InetAddress.getByName(ip), puerto);
+        System.out.println("[OK]");
     }
 
     public void inicializarFlujos() throws IOException {
-        System.out.println("Inicializando flujos...");
+        System.out.print("Inicializando flujos...");
         obos = new ObjectOutputStream(cliente.getOutputStream());
         obis = new ObjectInputStream(cliente.getInputStream());
+        System.out.println("[OK]");
     }
 
     public void enviarMensaje(Mensaje mensaje) throws IOException {
         System.out.println("Enviando mensaje...");
         obos.writeObject((Object) mensaje);
         obos.flush();
+        System.out.println("[OK]");
     }
 
-    public int recibirTurno() {
-        try {
-            if (obis.readBoolean()) {
-                return 1;
-            } else {
-                return 0;
-            }
-        } catch (IOException ex) {
-            System.err.println("Error al recibir turno");
-            return -1;
+    public int recibirTurno() throws IOException {
+        System.out.print("Recibiendo turno...");
+        if (obis.readBoolean()) {
+            System.out.print("[OK]");
+            return 1;
+        } else {
+            System.out.println("[OK]");
+            return 0;
         }
     }
 
