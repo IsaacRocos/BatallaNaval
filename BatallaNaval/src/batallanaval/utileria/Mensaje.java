@@ -10,16 +10,18 @@ import java.io.Serializable;
  *
  * @author Isaac
  */
+public class Mensaje implements Serializable {
 
-public class Mensaje implements Serializable{
     int tipoMensaje;
     int coorX;
     int coorY;
     boolean banderaAcertado;
     boolean banderaDerribado;
     boolean banderaVictoria;
+    private boolean banderaDerrota;
     boolean banderaEstadoConexion;
-
+    
+    public Mensaje(){}
     public Mensaje(int tipoMensaje, int coorX, int coorY, boolean banderaAcertado, boolean banderaDerribado, boolean banderaVictoria, boolean banderaEstadoConexion) {
         this.tipoMensaje = tipoMensaje;
         this.coorX = coorX;
@@ -30,7 +32,6 @@ public class Mensaje implements Serializable{
         this.banderaEstadoConexion = banderaEstadoConexion;
     }
 
-    
     public int getTipoMensaje() {
         return tipoMensaje;
     }
@@ -79,6 +80,14 @@ public class Mensaje implements Serializable{
         this.banderaVictoria = banderaVictoria;
     }
 
+    public boolean getBanderaDerrota() {
+        return banderaDerrota;
+    }
+
+    public void setBanderaDerrota(boolean banderaDerrota) {
+        this.banderaDerrota = banderaDerrota;
+    }
+
     public boolean getBanderaEstadoConexion() {
         return banderaEstadoConexion;
     }
@@ -86,9 +95,9 @@ public class Mensaje implements Serializable{
     public void setBanderaEstadoConexion(boolean banderaEstadoConexion) {
         this.banderaEstadoConexion = banderaEstadoConexion;
     }
-    
+
     @Override
-    public String toString(){
+    public String toString() {
         return "Tipo mensaje: " + tipoMensaje + " coorX: " + coorX + " coorY: " + coorY + " BanderaAcertado: " + banderaAcertado + " BanderaVictoria: " + banderaVictoria + " BanderaEstadoConexion: " + banderaEstadoConexion;
     }
 
