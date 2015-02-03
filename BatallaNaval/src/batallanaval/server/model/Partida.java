@@ -35,7 +35,11 @@ public class Partida implements Runnable {
             ObjectOutputStream out_1 = new ObjectOutputStream(player1.getOutputStream());
             ObjectInputStream in_2 = new ObjectInputStream(player2.getInputStream());
             ObjectOutputStream out_2 = new ObjectOutputStream(player2.getOutputStream());
-
+            //Envia turno habilitado al primer socket conectado.
+            out_1.writeBoolean(true);
+            out_1.flush();
+            out_2.writeBoolean(false);
+            out_2.flush();
             while (!finPartida) {
                 if (turno) {
                     //Jugador 1.
@@ -111,8 +115,8 @@ public class Partida implements Runnable {
                 p1.writeObject(msj);
                 p1.flush();
             } else {
-                p1.writeObject(msj);
-                p1.flush();
+                p2.writeObject(msj);
+                p2.flush();
             }
         } catch (IOException ex) {
             ex.printStackTrace();
