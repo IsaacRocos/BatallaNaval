@@ -3,9 +3,8 @@ package interfaz;
 import java.util.ArrayList;
 import java.util.Stack;
 
-import java.util.logging.Logger;
+
 import javax.swing.JButton;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
@@ -20,6 +19,12 @@ public class Tablero extends javax.swing.JFrame {
         initComponents();
         crearMatrizFlota(jPanel1, 1);
         crearMatrizFlota(jPanel3, 0);
+
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new Tablero().setVisible(true);
+            }
+        });
     }
 
     private void crearMatrizFlota(JPanel jpanel, int tipo) {
@@ -118,7 +123,7 @@ public class Tablero extends javax.swing.JFrame {
                             barcosPendientes--;
                         }
                     }
-                }else{
+                } else {
                     botonBNivel2.setEnabled(false);
                     BotonSubmarino.setEnabled(true);
                 }
@@ -144,7 +149,7 @@ public class Tablero extends javax.swing.JFrame {
                             barcosPendientes--;
                         }
                     }
-                }else{
+                } else {
                     BotonSubmarino.setEnabled(false);
                 }
                 break;
@@ -162,7 +167,7 @@ public class Tablero extends javax.swing.JFrame {
         botonesFlotaEnemiga[coorX][coorY].setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/pointer.png")));
     }
 
-    private void cambiarBloqueoDeBotones(int tablero, int tipoBloqueo) {
+    public void cambiarBloqueoDeBotones(int tablero, int tipoBloqueo) {
         JButton[][] flota;
         if (tablero == 1) {
             flota = botonesFlota;
@@ -185,14 +190,13 @@ public class Tablero extends javax.swing.JFrame {
         }
     }
 
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Tablero().setVisible(true);
-            }
-        });
-    }
-
+//    public static void main(String args[]) {
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                new Tablero().setVisible(true);
+//            }
+//        });
+//    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -299,7 +303,12 @@ public class Tablero extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        //DISPARAR
+        
+        synchronized(this){
+            Thread.currentThread().notifyAll();
+        }
+        
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void botonBNivel1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBNivel1ActionPerformed
@@ -319,51 +328,54 @@ public class Tablero extends javax.swing.JFrame {
         setBarcosPendientes(1);
         setCeldasPendientes(3);
     }//GEN-LAST:event_BotonSubmarinoActionPerformed
-    /**
-     * @param args the command line arguments
-     */
-    private JButton botonesFlota[][] = new JButton[15][15];
-    private JButton botonesFlotaEnemiga[][] = new JButton[15][15];
-    private Stack pilaDeSelecciones;
-    private int totalDeBarcos = 4;
-    private ArrayList<String> posicionesBarcos;
-    private int[] posicionActiva = new int[2];
-    private int barcoActivo = 0; // 1 barco nivel 1, 2 barco nivel2, etc 
-    private int barcosPendientes = 0; // barcos de un nivel, por colocar
-    private int celdasPendientes = 0; // barcos de un nivel, por colocar
 
-    public int getCeldasPendientes() {
+    /**
+     *
+     * @return
+     */
+    private int getCeldasPendientes() {
         return celdasPendientes;
     }
 
-    public void setCeldasPendientes(int celdasPendientes) {
+    /**
+     *
+     * @param celdasPendientes
+     */
+    private void setCeldasPendientes(int celdasPendientes) {
         this.celdasPendientes = celdasPendientes;
     }
 
-    public int getBarcosPendientes() {
+    /**
+     *
+     * @return
+     */
+    private int getBarcosPendientes() {
         return barcosPendientes;
     }
 
-    public void setBarcosPendientes(int barcosPendientes) {
+    /**
+     *
+     * @param barcosPendientes
+     */
+    private void setBarcosPendientes(int barcosPendientes) {
         this.barcosPendientes = barcosPendientes;
     }
 
-    public int getBarcoActivo() {
+    /**
+     *
+     * @return
+     */
+    private int getBarcoActivo() {
         return barcoActivo;
     }
 
-    public void setBarcoActivo(int barcoActivo) {
+    /**
+     *
+     * @param barcoActivo
+     */
+    private void setBarcoActivo(int barcoActivo) {
         this.barcoActivo = barcoActivo;
     }
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JToggleButton BotonSubmarino;
-    private javax.swing.JToggleButton botonBNivel1;
-    private javax.swing.JToggleButton botonBNivel2;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel3;
-    // End of variables declaration//GEN-END:variables
 
     private int[] getPosicionActiva() {
         return posicionActiva;
@@ -373,4 +385,43 @@ public class Tablero extends javax.swing.JFrame {
         this.posicionActiva[0] = posiciconActiva[0];
         this.posicionActiva[1] = posiciconActiva[1];
     }
+
+    /**
+     *
+     * @return
+     */
+    public ArrayList<String> getListaCoordenadasBarcos() {
+        return posicionesBarcos;
+    }
+
+    /**
+     *
+     * @param x
+     * @param y
+     * @param banderaAcertado
+     * @param banderaDerribado
+     */
+    public void setCelda(int x, int y, boolean banderaAcertado, boolean banderaDerribado) {
+    }
+    //------------------------------
+    //-- Variables de declaración --
+    //------------------------------
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToggleButton BotonSubmarino;
+    private javax.swing.JToggleButton botonBNivel1;
+    private javax.swing.JToggleButton botonBNivel2;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel3;
+    // End of variables declaration//GEN-END:variables
+    private JButton botonesFlota[][] = new JButton[15][15];
+    private JButton botonesFlotaEnemiga[][] = new JButton[15][15];
+    private Stack pilaDeSelecciones;
+    private int totalDeBarcos = 4;
+    private ArrayList<String> posicionesBarcos;
+    private int[] posicionActiva = new int[2];
+    private int barcoActivo = 0; // 1 barco nivel 1, 2 barco nivel2, etc 
+    private int barcosPendientes = 0; // barcos de un nivel, por colocar
+    private int celdasPendientes = 0; // barcos de un nivel, por colocar
 }

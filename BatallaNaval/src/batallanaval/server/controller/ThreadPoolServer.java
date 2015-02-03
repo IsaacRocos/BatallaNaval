@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
  *
  * @author Mario Cantellano
  */
-public class ThreadPoolServer {
+public class ThreadPoolServer{
 
     protected int serverPort = 2222;
     protected ServerSocket serverSocket = null;
@@ -49,7 +49,7 @@ public class ThreadPoolServer {
                     System.out.println("Server detenido.");
                     break;
                 }
-                throw new RuntimeException("Error estableciendo conexion con el jugador", e);
+                throw new RuntimeException("Error al establecer conexion con jugador ", e);
             }
         }
         this.threadPool.shutdown();

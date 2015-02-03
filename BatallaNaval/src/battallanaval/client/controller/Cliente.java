@@ -1,6 +1,7 @@
 package battallanaval.client.controller;
 
 import batallanaval.utileria.Mensaje;
+import interfaz.Tablero;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -9,21 +10,25 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+
 
 /**
  *
  * @author Isaac
  */
-public class Cliente {
+public class Cliente{
 
     private Socket cliente = null;
     private String ip = "";
     private int puerto;
-    private ObjectOutputStream obos;
-    private ObjectInputStream obis;
+    private ObjectOutputStream obos=null;
+    private ObjectInputStream obis=null;
     private ByteArrayOutputStream baos;
     private ByteArrayInputStream bais;
     private int turno;
+    private ArrayList<String> listaPosicionesBarcos;
+    private Tablero tablero;
 
     public Cliente(int puerto, String ip) {
         this.puerto = puerto;
@@ -44,6 +49,12 @@ public class Cliente {
             System.err.print("Error al inicializar flujos");
         }
         try {
+            //Ejecutar interfaz
+            ejecutarTablero();
+        } catch (Exception ex) {
+            System.err.println("Ocurrio un error al intentar cargar el tablero:" + ex.getMessage());
+        }
+        try {
             turno = recibirTurno();
         } catch (IOException ex) {
             System.err.println("Error al recibir turno");
@@ -54,13 +65,25 @@ public class Cliente {
             switch (turno) {
                 case 1:
                     //Desbloqueo mapa de disparo.
+                    tablero.cambiarBloqueoDeBotones(2, 1);
                     //Creo mensaje a partir de lo seleccionado en la IU.
+                    synchronized (tablero) {
+                        try {
+                            tablero.wait();
+                        } catch (InterruptedException ex) {
+                            System.err.println("Ocurrio un problema mientras se esperaba disparo");
+                        }catch(Exception ex){
+                            System.out.println("Ocurrio un problema noesperado mientras se esperaba disparo" + ex.getMessage());
+                        }
+                    }
+                    System.out.println("LISTO!!!");
                     //Envio disparo
                     //Recibo confirmacion.
-                    //Verifico bandera victoria. Si gano turno = -1 sino turno = 0;
+                    //Verifico bandera victoria. Si gano turno = -1 si no turno = 0;
                     break;
                 case 0:
                     // Bloqueo mapa de disparo.
+                    tablero.cambiarBloqueoDeBotones(2, 0);
                     // Recibo disparo.
                     // Envio confirmacion.
                     // Recibo y verifico mensaje derrota.
@@ -78,8 +101,8 @@ public class Cliente {
 
     public void inicializarFlujos() throws IOException {
         System.out.print("Inicializando flujos...");
-        obos = new ObjectOutputStream(cliente.getOutputStream());
         obis = new ObjectInputStream(cliente.getInputStream());
+        obos = new ObjectOutputStream(cliente.getOutputStream());
         System.out.println("[OK]");
     }
 
@@ -127,4 +150,7 @@ public class Cliente {
         }
     }
 
+    private void ejecutarTablero() {
+        tablero = new Tablero();
+    }
 }//clase
