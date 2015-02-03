@@ -72,8 +72,9 @@ public class Partida implements Runnable {
                     out_2.flush();
                     turno = true;
                 }
+                
             }
-            enviarDerrota();
+            
             out_1.close();
             in_1.close();
             out_2.close();
@@ -103,22 +104,25 @@ public class Partida implements Runnable {
         if (derribados1 == totalEmbarcaciones || derribados2 == totalEmbarcaciones) {
             finPartida = true;
             msj.setBanderaVictoria(true);
+            enviarDerrota(true);
+        }else{
+            enviarDerrota(false);
         }
     }
 
     /**
      * Envia mensaje de derrota al jugador con el turno activo.
      */
-    private void enviarDerrota() {
-        msj = new Mensaje();
-        msj.setBanderaDerrota(true);
-        msj.setBanderaVictoria(false);
+    private void enviarDerrota(boolean banderaDerrota) {
+        Mensaje msjDerrota = new Mensaje();
+        msjDerrota.setBanderaDerrota(banderaDerrota);
+        msjDerrota.setBanderaVictoria(false);
         try {
-            if (turno) {
-                out_1.writeObject(msj);
+            if (!turno) { // envia derrota al que no tenia el turno.
+                out_1.writeObject(msjDerrota);
                 out_1.flush();
             } else {
-                out_2.writeObject(msj);
+                out_2.writeObject(msjDerrota);
                 out_2.flush();
             }
         } catch (IOException ex) {
