@@ -67,7 +67,6 @@ public class Partida implements Runnable {
                     //Jugador 1.
                     out_2.writeObject(in_1.readObject()); // Jugador 1 dispara y jugador 2 recibe
                     out_2.flush();
-
                     // Jugador 2 confirma
                     msj = (Mensaje) in_2.readObject();
                     verificarFinDePartida();

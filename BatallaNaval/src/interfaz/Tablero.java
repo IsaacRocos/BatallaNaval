@@ -199,8 +199,14 @@ public class Tablero extends javax.swing.JFrame {
             for (int j = 0; j < flota[0].length; j++) {
                 if (tipoBloqueo == 0) {
                     flota[i][j].setEnabled(false);
+                    if(tablero == 2){
+                        botonDisparar.setEnabled(false);
+                    }
                 } else {
                     flota[i][j].setEnabled(true);
+                    if(tablero == 2){
+                        botonDisparar.setEnabled(true);
+                    }
                 }
             }
         }
@@ -224,7 +230,7 @@ public class Tablero extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        botonDisparar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         botonBNivel1 = new javax.swing.JToggleButton();
         botonBNivel2 = new javax.swing.JToggleButton();
@@ -243,10 +249,11 @@ public class Tablero extends javax.swing.JFrame {
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Flota Enemiga", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Calibri", 1, 14), new java.awt.Color(204, 0, 0))); // NOI18N
         jPanel3.setLayout(new java.awt.GridLayout(1, 0));
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/1422930528_Bullet Bill.png"))); // NOI18N
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        botonDisparar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/1422930528_Bullet Bill.png"))); // NOI18N
+        botonDisparar.setEnabled(false);
+        botonDisparar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                botonDispararActionPerformed(evt);
             }
         });
 
@@ -306,7 +313,7 @@ public class Tablero extends javax.swing.JFrame {
                     .addComponent(jLabel2))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(botonDisparar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
                 .addContainerGap(60, Short.MAX_VALUE))
@@ -322,7 +329,7 @@ public class Tablero extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
+                            .addComponent(botonDisparar, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
                             .addComponent(botonListo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -341,10 +348,10 @@ public class Tablero extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        System.out.println("Diparando a: " + posicionActiva[0] +","+ posicionActiva[1]);
-        cliente.crearDisparo(posicionActiva[0],posicionActiva[1]);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void botonDispararActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonDispararActionPerformed
+        System.out.println("Objetivo fijado: " + posicionActiva[0] +","+ posicionActiva[1]);
+        cliente.disparar(posicionActiva[0],posicionActiva[1]);
+    }//GEN-LAST:event_botonDispararActionPerformed
 
     private void botonBNivel1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBNivel1ActionPerformed
         setBarcoActivo(1);
@@ -494,8 +501,8 @@ public class Tablero extends javax.swing.JFrame {
     private javax.swing.JToggleButton BotonSubmarino;
     private javax.swing.JToggleButton botonBNivel1;
     private javax.swing.JToggleButton botonBNivel2;
+    private javax.swing.JButton botonDisparar;
     private javax.swing.JButton botonListo;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;

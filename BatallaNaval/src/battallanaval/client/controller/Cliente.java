@@ -100,11 +100,13 @@ public class Cliente extends Thread {
                         System.out.println("<C>Espera interrumpida en lectura");
                     }
                     //Recibir confirmación
-                    System.out.println("<C>Enviando confirmacion de enemigo...");
+                    System.out.println("<C>Esperando confirmacion de enemigo...");
                     Mensaje confirmacion = recibirMensaje();
+                    System.out.println("Recibido:" + confirmacion);
                     //Verifico bandera victoria. Si gano turno = -1 si no turno = 0;
                     System.out.println("<C>Verificando victoria o derrota...");
                     boolean victoria = traducirMensaje(confirmacion, 1);
+                    System.out.println("Victoria?" + victoria);
                     if (victoria) {
                         turno = -1;
                     } else {
@@ -117,7 +119,7 @@ public class Cliente extends Thread {
                     // Recibo disparo.
                     System.out.println("<C>Esperando disparo...");
                     Mensaje disparo = recibirMensaje();
-                    System.out.println("<C>Disparo recibido...");
+                    System.out.println("<C>Disparo recibido...\n" + disparo);
                     // Envio confirmacion.
                     System.out.println("<C>Enviando confirmacion...");
                     Mensaje confirmacionDisparo = traducirDisparo(disparo);
@@ -129,12 +131,14 @@ public class Cliente extends Thread {
                     // Recibo y verifico mensaje derrota.
                     System.out.println("<C>Verificando victoria o derrota...");
                     Mensaje respuesta = recibirMensaje();
+                    System.out.println("Recibido (V/D)" + respuesta);
                     // Si pierdo rompo ciclo turno = -1. Si no turno = 1;
                     victoria = traducirMensaje(respuesta, 2);
+                    System.out.println("Derrota?" + victoria);
                     if (victoria) {
                         turno = -1;
                     } else {
-                        turno = 0;
+                        turno = 1;
                     }
                     break;
             }
@@ -224,6 +228,7 @@ public class Cliente extends Thread {
      * @param y
      */
     public void disparar(int x, int y) {
+        System.out.println("<C>Creando disparo");
         Mensaje disparo = crearDisparo(x, y);
         try {
             enviarMensaje(disparo);
