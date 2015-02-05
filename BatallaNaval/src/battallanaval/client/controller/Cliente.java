@@ -87,7 +87,7 @@ public class Cliente extends Thread {
                     //Desbloqueo mapa de disparo.
                     System.out.println("<C>Preparandose para disparar...");
                     tablero.cambiarBloqueoDeBotones(2, 1);
-                    System.out.println("<C>Esperando a interfaz");
+                    System.out.println("<C>Esperando a interfaz para disparar");
                     synchronized (tablero) {
                         try {
                             tablero.wait();
@@ -102,8 +102,10 @@ public class Cliente extends Thread {
                         System.out.println("<C>Espera interrumpida en lectura");
                     }
                     //Recibir confirmación
+                    System.out.println("<C>Enviando confirmacion de enemigo...");
                     Mensaje confirmacion = recibirMensaje();
                     //Verifico bandera victoria. Si gano turno = -1 si no turno = 0;
+                    System.out.println("<C>Verificando victoria o derrota...");
                     boolean victoria = traducirMensaje(confirmacion, 1);
                     if (victoria) {
                         turno = -1;
@@ -115,8 +117,11 @@ public class Cliente extends Thread {
                     // Bloqueo mapa de disparo.
                     tablero.cambiarBloqueoDeBotones(2, 0);
                     // Recibo disparo.
+                    System.out.println("<C>Esperando disparo...");
                     Mensaje disparo = recibirMensaje();
+                    System.out.println("<C>Disparo recibido...");
                     // Envio confirmacion.
+                    System.out.println("<C>Enviando confirmacion...");
                     Mensaje confirmacionDisparo = traducirDisparo(disparo);
                     try {
                         enviarMensaje(disparo);
@@ -124,6 +129,7 @@ public class Cliente extends Thread {
                         System.err.println("<C>Error al enviar confrmacion");
                     }
                     // Recibo y verifico mensaje derrota.
+                    System.out.println("<C>Verificando victoria o derrota...");
                     Mensaje respuesta = recibirMensaje();
                     // Si pierdo rompo ciclo turno = -1. Si no turno = 1;
                     victoria = traducirMensaje(respuesta, 2);

@@ -62,9 +62,6 @@ public class Partida implements Runnable {
             out_1.flush();
             out_2.writeBoolean(false);
             out_2.flush();
-            if (in_1.readBoolean()) {
-                out_2.writeBoolean(true);
-            }
             while (!finPartida) {
                 if (turno) {
                     //Jugador 1.

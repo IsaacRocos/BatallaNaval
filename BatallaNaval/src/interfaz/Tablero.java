@@ -109,7 +109,10 @@ public class Tablero extends javax.swing.JFrame {
                     pilaDeSelecciones.push(posicion);
                     --barcosPendientes;
                     ++barcoListos;
-                    botonBNivel2.setEnabled(true);
+                    if(barcosPendientes==0){
+                        botonBNivel2.setEnabled(true);
+                    }
+                    
                 }
                 break;
             case 2:
@@ -339,9 +342,8 @@ public class Tablero extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
+        System.out.println("Diparando a: " + posicionActiva[0] +","+ posicionActiva[1]);
         cliente.crearDisparo(posicionActiva[0],posicionActiva[1]);
-        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void botonBNivel1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBNivel1ActionPerformed
