@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 public class Tablero extends javax.swing.JFrame {
 
     private Cliente cliente = null;
+    private Tablero tablero;
     
     public Tablero() {
         pilaDeSelecciones = new Stack();
@@ -445,6 +446,8 @@ public class Tablero extends javax.swing.JFrame {
      * @return
      */
     public ArrayList<String> getListaCoordenadasBarcos() {
+        System.out.print("Posiciones de barcos: ");
+        System.out.println(posicionesBarcos);
         return posicionesBarcos;
     }
 
@@ -466,9 +469,10 @@ public class Tablero extends javax.swing.JFrame {
     public void setCelda(int x, int y, boolean banderaAcertado, int tablero) {
         if(banderaAcertado){
             if(tablero == 1){
-                getCampo1()[x][y].setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/bhr.png")));
+                getCampo1()[x][y].setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/bdr.png")));
             }else{
                 getCampo2()[x][y].setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/img/skull.png")));
+                getCampo2()[x][y].setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/skull.png")));
                 getCampo2()[x][y].setEnabled(false);
             }
         }else{
@@ -476,6 +480,7 @@ public class Tablero extends javax.swing.JFrame {
                 getCampo1()[x][y].setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/danger.png")));
             }else{
                 getCampo2()[x][y].setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/img/fail.png")));
+                getCampo2()[x][y].setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/fail.png")));
                 getCampo2()[x][y].setEnabled(false);
             }
         }
@@ -492,6 +497,15 @@ public class Tablero extends javax.swing.JFrame {
     
     public void desbloquearBotonInicial() {
         botonBNivel1.setEnabled(true);
+    }
+    
+    public Tablero getTablero(){
+        return this.tablero;
+    }
+    
+    
+    public void setBotonDispararDisabled(){
+        botonDisparar.setEnabled(false);
     }
     
     //------------------------------
