@@ -439,7 +439,13 @@ public class Tablero extends javax.swing.JFrame {
         return posicionesBarcos;
     }
 
+    public JButton[][] getCampo1(){
+        return botonesFlota;
+    }
     
+    public JButton[][] getCampo2(){
+        return botonesFlotaEnemiga;
+    }
     
     /**
      *
@@ -448,7 +454,22 @@ public class Tablero extends javax.swing.JFrame {
      * @param banderaAcertado
      * @param banderaDerribado
      */
-    public void setCelda(int x, int y, boolean banderaAcertado, boolean banderaDerribado) {
+    public void setCelda(int x, int y, boolean banderaAcertado, int tablero) {
+        if(banderaAcertado){
+            if(tablero == 1){
+                getCampo1()[x][y].setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/bhr.png")));
+            }else{
+                getCampo2()[x][y].setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/img/skull.png")));
+                getCampo2()[x][y].setEnabled(false);
+            }
+        }else{
+            if(tablero == 1){
+                getCampo1()[x][y].setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/danger.png")));
+            }else{
+                getCampo2()[x][y].setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/img/fail.png")));
+                getCampo2()[x][y].setEnabled(false);
+            }
+        }
     }
     
     
@@ -488,6 +509,5 @@ public class Tablero extends javax.swing.JFrame {
     private int barcosPendientes = 0; // barcos de un nivel, por colocar
     private int barcoListos = 0;
     private int celdasPendientes = 0; // barcos de un nivel, por colocar
-
     
 }

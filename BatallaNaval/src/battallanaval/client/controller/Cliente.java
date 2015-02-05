@@ -25,20 +25,32 @@ public class Cliente extends Thread {
     private int puerto;
     private ObjectOutputStream obos = null;
     private ObjectInputStream obis = null;
-    private ByteArrayOutputStream baos;
-
-    public ObjectOutputStream getObos() {
-        return obos;
-    }
-
-    public ObjectInputStream getObis() {
-        return obis;
-    }
     private ByteArrayInputStream bais;
     private int turno;
     private ArrayList<String> listaPosicionesBarcos;
     private Tablero tablero;
 
+    /**
+     *
+     * @return
+     */
+    public ObjectOutputStream getObos() {
+        return obos;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public ObjectInputStream getObis() {
+        return obis;
+    }
+
+    /**
+     *
+     * @param puerto
+     * @param ip
+     */
     public Cliente(int puerto, String ip) {
         this.tablero = null;
         this.puerto = puerto;
@@ -59,7 +71,9 @@ public class Cliente extends Thread {
         } catch (IOException ex) {
             System.err.print("Error al inicializar flujos");
         }
-        try { //recibir turno inicial
+        try {
+            //recibir turno inicial y lista de barcos 
+            this.listaPosicionesBarcos = tablero.getListaCoordenadasBarcos();
             turno = recibirTurno();
         } catch (IOException ex) {
             System.err.println("Error al recibir turno");
@@ -77,27 +91,39 @@ public class Cliente extends Thread {
                     synchronized (tablero) {
                         try {
                             tablero.wait();
+                            System.out.println("<C>Interfaz lista");
                         } catch (InterruptedException ex) {
                             System.out.println("<C>Espera interrumpida");
                         }
                     }
-                    System.out.println("<C>Interfaz lista");
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException ex) {
                         System.out.println("<C>Espera interrumpida en lectura");
                     }
-
-                    
-
-                    //Recibo confirmacion.
+                    //Recibir confirmación
+                    Mensaje confirmacion = recibirMensaje();
                     //Verifico bandera victoria. Si gano turno = -1 si no turno = 0;
+                    boolean victoria = traducirMensaje(confirmacion, 1);
+                    if (victoria) {
+                        turno = -1;
+                    } else {
+                        turno = 0;
+                    }
                     break;
                 case 0:
                     // Bloqueo mapa de disparo.
                     tablero.cambiarBloqueoDeBotones(2, 0);
                     // Recibo disparo.
+                    Mensaje disparo = recibirMensaje();
                     // Envio confirmacion.
+                    Mensaje confirmacionDisparo = traducirDisparo(disparo);
+                    try {
+                        enviarMensaje(disparo);
+                    } catch (IOException ex) {
+                        System.err.println("<C>Error al enviar confrmacion");
+                    }
+                    
                     // Recibo y verifico mensaje derrota.
                     // Si pierdo rompo ciclo turno = -1. Si no turno = 1;
                     break;
@@ -106,12 +132,21 @@ public class Cliente extends Thread {
 
     }
 
+    /**
+     *
+     * @throws UnknownHostException
+     * @throws IOException
+     */
     public void conectarAServidor() throws UnknownHostException, IOException {
         System.out.println("Conectando a servidor...");
         socketCliente = new Socket(InetAddress.getByName(ip), puerto);//InetAddress.getByName(ip), puerto);
         System.out.println("[OK]");
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     public void inicializarFlujos() throws IOException {
         System.out.println("Inicializando flujos...");
         obos = new ObjectOutputStream(socketCliente.getOutputStream());
@@ -120,6 +155,11 @@ public class Cliente extends Thread {
         System.out.println("[OK]");
     }
 
+    /**
+     *
+     * @param mensaje
+     * @throws IOException
+     */
     public void enviarMensaje(Mensaje mensaje) throws IOException {
         System.out.println("Enviando mensaje...");
         obos.writeObject((Object) mensaje);
@@ -127,6 +167,10 @@ public class Cliente extends Thread {
         System.out.println("[OK]");
     }
 
+    /**
+     *
+     * @return @throws IOException
+     */
     public int recibirTurno() throws IOException {
         System.out.println("Recibiendo turno...");
         if (obis.readBoolean()) {
@@ -138,6 +182,10 @@ public class Cliente extends Thread {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public Mensaje recibirMensaje() {
         Mensaje mensaje = null;
         try {
@@ -152,6 +200,10 @@ public class Cliente extends Thread {
         return mensaje;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean esperarTurno() {
         return false;
     }
@@ -164,10 +216,19 @@ public class Cliente extends Thread {
         System.out.println("[OK]");
     }
 
+    /**
+     *
+     * @param aThis
+     */
     public void setTablero(Tablero aThis) {
         this.tablero = aThis;
     }
 
+    /**
+     *
+     * @param x
+     * @param y
+     */
     public void disparar(int x, int y) {
         Mensaje disparo = crearDisparo(x, y);
         try {
@@ -175,13 +236,52 @@ public class Cliente extends Thread {
         } catch (IOException ex) {
             System.out.println("<C>Error al disparar");
         }
-        synchronized(tablero){
+        synchronized (tablero) {
             tablero.notifyAll();
         }
     }
 
+    /**
+     *
+     * @param x
+     * @param y
+     * @return
+     */
     public Mensaje crearDisparo(int x, int y) {
         return new Mensaje(x, y);
 
     }
+
+    private boolean traducirMensaje(Mensaje confirmacion, int tipoVerif) {
+        int x, y;
+        boolean resultado;
+
+        if (tipoVerif == 1) {
+            resultado = confirmacion.getBanderaVictoria();
+        } else {
+            resultado = confirmacion.getBanderaDerrota();
+        }
+        x = confirmacion.getCoorX();
+        y = confirmacion.getCoorY();
+
+
+
+        return resultado;
+    }
+
+    private Mensaje traducirDisparo(Mensaje disparo) {
+        Mensaje confirmacion = new Mensaje();
+        int x = disparo.getCoorX();
+        int y = disparo.getCoorY();
+        boolean banderaAcertado = false;
+        String coordenada = x + "," + y;
+        if (listaPosicionesBarcos.contains(coordenada)) {
+            banderaAcertado = true;
+        }
+        confirmacion.setCoorX(x);
+        confirmacion.setCoorY(y);
+        confirmacion.setBanderaAcertado(banderaAcertado);
+        return confirmacion;
+    }
 }//clase
+

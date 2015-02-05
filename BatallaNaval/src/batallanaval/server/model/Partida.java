@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  */
 public class Partida implements Runnable {
 
-    private static final int totalEmbarcaciones = 5;
+    private static final int totalBloquesEmbarcaciones = 7;
     protected Socket player1 = null;
     protected Socket player2 = null;
     private boolean turno;
@@ -26,7 +26,7 @@ public class Partida implements Runnable {
     private ObjectOutputStream out_1, out_2 = null;
     private boolean banderaEsperandoJugador = false;
 
-        public Partida() {
+    public Partida() {
         derribados1 = 0;
         derribados2 = 0;
         turno = true;
@@ -62,7 +62,7 @@ public class Partida implements Runnable {
             out_1.flush();
             out_2.writeBoolean(false);
             out_2.flush();
-            if(in_1.readBoolean()){
+            if (in_1.readBoolean()) {
                 out_2.writeBoolean(true);
             }
             while (!finPartida) {
@@ -70,7 +70,7 @@ public class Partida implements Runnable {
                     //Jugador 1.
                     out_2.writeObject(in_1.readObject()); // Jugador 1 dispara y jugador 2 recibe
                     out_2.flush();
-               
+
                     // Jugador 2 confirma
                     msj = (Mensaje) in_2.readObject();
                     verificarFinDePartida();
@@ -96,7 +96,7 @@ public class Partida implements Runnable {
             out_2.close();
             in_2.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("<p>Error en flujo de partida");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Partida.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -110,14 +110,15 @@ public class Partida implements Runnable {
      *
      */
     private void verificarFinDePartida() {
-        if (msj.getBanderaDerribado()) {
+        //if (msj.getBanderaDerribado()) {
+        if (msj.getBanderaAcertado()) {
             if (turno) {
                 derribados1++;
             } else {
                 derribados2++;
             }
         }
-        if (derribados1 == totalEmbarcaciones || derribados2 == totalEmbarcaciones) {
+        if (derribados1 == totalBloquesEmbarcaciones || derribados2 == totalBloquesEmbarcaciones) {
             finPartida = true;
             msj.setBanderaVictoria(true);
             enviarDerrota(true);
@@ -142,7 +143,7 @@ public class Partida implements Runnable {
                 out_2.flush();
             }
         } catch (IOException ex) {
-            ex.printStackTrace();
+           System.err.println("<p>Error en flujo de partida al intentar enviar derrota");
         }
     }
 
@@ -159,7 +160,6 @@ public class Partida implements Runnable {
                 out_1.flush();
                 in_1 = new ObjectInputStream(player1.getInputStream());
             }
-
         } catch (IOException ex) {
             System.out.println("<p>Problemas al inicializar flujos");
         }

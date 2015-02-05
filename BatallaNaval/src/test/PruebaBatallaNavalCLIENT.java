@@ -3,8 +3,6 @@
  * and open the template in the editor.
  */
 package test;
-
-import battallanaval.client.controller.Cliente;
 import interfaz.Tablero;
 
 /**
