@@ -123,9 +123,15 @@ public class Cliente extends Thread {
                     } catch (IOException ex) {
                         System.err.println("<C>Error al enviar confrmacion");
                     }
-                    
                     // Recibo y verifico mensaje derrota.
+                    Mensaje respuesta = recibirMensaje();
                     // Si pierdo rompo ciclo turno = -1. Si no turno = 1;
+                    victoria = traducirMensaje(respuesta, 2);
+                    if (victoria) {
+                        turno = -1;
+                    } else {
+                        turno = 0;
+                    }
                     break;
             }
         }
@@ -202,22 +208,6 @@ public class Cliente extends Thread {
 
     /**
      *
-     * @return
-     */
-    public boolean esperarTurno() {
-        return false;
-    }
-
-    private void ejecutarTablero() {
-        System.out.println("Ejecutando tablero...");
-        tablero = new Tablero();
-        tablero.setCliente(this);
-        tablero.arrancarTablero();
-        System.out.println("[OK]");
-    }
-
-    /**
-     *
      * @param aThis
      */
     public void setTablero(Tablero aThis) {
@@ -256,15 +246,13 @@ public class Cliente extends Thread {
         int x, y;
         boolean resultado;
 
-        if (tipoVerif == 1) {
+        if (tipoVerif == 1) { //Verificar victoria
             resultado = confirmacion.getBanderaVictoria();
-        } else {
+        } else { //Verificar derrota
             resultado = confirmacion.getBanderaDerrota();
         }
         x = confirmacion.getCoorX();
         y = confirmacion.getCoorY();
-
-
 
         return resultado;
     }
