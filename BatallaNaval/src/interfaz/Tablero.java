@@ -105,7 +105,7 @@ public class Tablero extends javax.swing.JFrame {
             case 1:
                 if (getBarcosPendientes() > 0) {
                     System.out.println("Niv1-Posicion valida");
-                    botonesFlota[coorX][coorY].setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/bh.png")));
+                    botonesFlota[coorX][coorY].setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/yc.png")));
                     posicionesBarcos.add(coorX + "," + coorY);
                     pilaDeSelecciones.push(posicion);
                     --barcosPendientes;
@@ -120,7 +120,7 @@ public class Tablero extends javax.swing.JFrame {
                 if (getBarcosPendientes() > 0) {
                     if (celdasPendientes == 2) {
                         System.out.println("Niv2-Posicion valida");
-                        botonesFlota[coorX][coorY].setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/bh.png")));
+                        botonesFlota[coorX][coorY].setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/ocg.png")));
                         posicionesBarcos.add(coorX + "," + coorY);
                         pilaDeSelecciones.push(posicion);
                         --celdasPendientes;
@@ -128,7 +128,7 @@ public class Tablero extends javax.swing.JFrame {
                         if (celdasPendientes > 0) {
                             if (((coorX == (antX + 1)) && coorY == antY) || ((coorX == (antX - 1)) && coorY == antY) || ((coorY == (antY + 1)) && coorX == antX) || ((coorY == (antY - 1)) && coorX == antX)) {
                                 System.out.println("Niv2-Posicion valida");
-                                botonesFlota[coorX][coorY].setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/bh.png")));
+                                botonesFlota[coorX][coorY].setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/ocg.png")));
                                 posicionesBarcos.add(coorX + "," + coorY);
                                 pilaDeSelecciones.push(posicion);
                                 --celdasPendientes;
@@ -148,7 +148,7 @@ public class Tablero extends javax.swing.JFrame {
                 if (getBarcosPendientes() > 0) {
                     if (celdasPendientes == 3) {
                         System.out.println("Sub-Posicion valida");
-                        botonesFlota[coorX][coorY].setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/bh.png")));
+                        botonesFlota[coorX][coorY].setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/ocb.png")));
                         posicionesBarcos.add(coorX + "," + coorY);
                         pilaDeSelecciones.push(posicion);
                         --celdasPendientes;
@@ -156,7 +156,7 @@ public class Tablero extends javax.swing.JFrame {
                         if (celdasPendientes != 0) {
                             if (((coorX == (antX + 1)) && coorY == antY) || ((coorX == (antX - 1)) && coorY == antY) || ((coorY == (antY + 1)) && coorX == antX) || ((coorY == (antY - 1)) && coorX == antX)) {
                                 System.out.println("Sub-Posicion valida");
-                                botonesFlota[coorX][coorY].setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/bh.png")));
+                                botonesFlota[coorX][coorY].setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/ocb.png")));
                                 posicionesBarcos.add(coorX + "," + coorY);
                                 pilaDeSelecciones.push(posicion);
                                 --celdasPendientes;
@@ -379,9 +379,14 @@ public class Tablero extends javax.swing.JFrame {
     }//GEN-LAST:event_BotonSubmarinoActionPerformed
 
     private void botonListoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonListoActionPerformed
+        try{
         cliente = new Cliente(2222,"localhost");
         cliente.setTablero(this);
         cliente.start();
+        botonListo.setEnabled(false);
+        }catch(Exception ex){
+            System.out.println(" Ocurrio una excepcion en el cliente. Puede que se haya cerado el Socket.");
+        }
     }//GEN-LAST:event_botonListoActionPerformed
 
     /**

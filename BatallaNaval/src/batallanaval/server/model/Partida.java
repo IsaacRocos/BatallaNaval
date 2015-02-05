@@ -92,7 +92,7 @@ public class Partida implements Runnable {
             out_2.close();
             in_2.close();
         } catch (IOException e) {
-            System.err.println("<p>Error en flujo de partida");
+            System.err.println("<p>La partida ha terminado");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Partida.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -160,4 +160,6 @@ public class Partida implements Runnable {
             System.out.println("<p>Problemas al inicializar flujos");
         }
     }
+        
+    
 }
