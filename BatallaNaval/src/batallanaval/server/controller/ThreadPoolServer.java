@@ -1,6 +1,7 @@
 package batallanaval.server.controller;
 
 import batallanaval.server.model.Partida;
+import batallanaval.utileria.FinPartidaException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;

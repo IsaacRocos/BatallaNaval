@@ -107,7 +107,7 @@ public class Mensaje implements Serializable {
 
     @Override
     public String toString() {
-        return  "<Mensaje> coorX: " + coorX + " coorY: " + coorY + " BanderaAcertado: " + banderaAcertado + " BanderaVictoria: " + banderaVictoria + " BanderaEstadoConexion: " + banderaEstadoConexion;
+        return  "<Mensaje> coorX: " + coorX + " coorY: " + coorY + " BanderaAcertado: " + banderaAcertado + " BanderaVictoria: " + banderaVictoria + "BanderaDerrota: " + banderaDerrota+  " BanderaEstadoConexion: " + banderaEstadoConexion;
     }
 
 }

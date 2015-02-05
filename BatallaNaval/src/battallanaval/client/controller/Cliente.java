@@ -3,7 +3,6 @@ package battallanaval.client.controller;
 import batallanaval.utileria.Mensaje;
 import interfaz.Tablero;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -11,6 +10,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -30,22 +30,6 @@ public class Cliente extends Thread {
 
     /**
      *
-     * @return
-     */
-    public ObjectOutputStream getObos() {
-        return obos;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public ObjectInputStream getObis() {
-        return obis;
-    }
-
-    /**
-     *
      * @param puerto
      * @param ip
      */
@@ -55,6 +39,7 @@ public class Cliente extends Thread {
         this.ip = ip;
     }
 
+    
     @Override
     public void run() {
         try {
@@ -80,63 +65,74 @@ public class Cliente extends Thread {
         System.out.println("Turno recibido:" + turno);
         while (turno != -1) {
             //Recibo turno
+            boolean victoria;
             switch (turno) {
                 case 1:
+                    System.out.println("--------NUEVO TURNO---------");
                     //Desbloqueo mapa de disparo.
                     System.out.println("<C>Preparandose para disparar...");
                     tablero.cambiarBloqueoDeBotones(2, 1);
-                    System.out.println("<C>Esperando a interfaz para disparar");
+                    System.out.println("<C>Esperando coordenadas desde campo de batalla para disparar...");
                     synchronized (tablero) {
                         try {
                             tablero.wait();
-                            System.out.println("<C>Interfaz lista");
+                            System.out.println("<C>Misil enviado...");
                         } catch (InterruptedException ex) {
-                            System.out.println("<C>Espera interrumpida");
+                            System.out.println("<C>Algo inesperado le ocurrio al misil. El lanzamiento fue interrumpido");
                         }
                     }
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException ex) {
-                        System.out.println("<C>Espera interrumpida en lectura");
+                        System.out.println("<C>Parece que el misil no llego al campo enemigo");
                     }
                     //Recibir confirmación
-                    System.out.println("<C>Esperando confirmacion de enemigo...");
+                    System.out.println("<C>Esperando confirmacion de impacto en flota enemiga...");
                     Mensaje confirmacion = recibirMensaje();
-                    System.out.println("Recibido:" + confirmacion);
+                    System.out.println("Mensaje recibido:" + confirmacion);
                     //Verifico bandera victoria. Si gano turno = -1 si no turno = 0;
-                    System.out.println("<C>Verificando victoria o derrota...");
-                    boolean victoria = traducirMensaje(confirmacion, 1);
-                    System.out.println("Victoria?" + victoria);
+                    System.out.println("<C>Verificando victoria o derrota de la flota...");
+                    victoria = traducirMensaje(confirmacion, 1);
+                    System.out.println("¿Victoria?" + victoria);
                     if (victoria) {
                         turno = -1;
+                        JOptionPane.showMessageDialog(tablero, "¡¡Has ganado esta Batalla!!");
+                        tablero.setBotonDispararDisabled();
                     } else {
                         turno = 0;
                     }
+                    System.out.println("----------------");
                     break;
                 case 0:
                     // Bloqueo mapa de disparo.
                     tablero.cambiarBloqueoDeBotones(2, 0);
                     // Recibo disparo.
-                    System.out.println("<C>Esperando disparo...");
+                    System.out.println("<C>Esperando disparo de flota enemiga...");
                     Mensaje disparo = recibirMensaje();
-                    System.out.println("<C>Disparo recibido...\n" + disparo);
+                    System.out.println("<C>Disparo detectado...\n" + disparo);
                     // Envio confirmacion.
-                    System.out.println("<C>Enviando confirmacion...");
-                    Mensaje confirmacionDisparo = traducirDisparo(disparo);
+                    System.out.println("<C>Verificando danios en la flota...");
+                    Mensaje confirmacionDisparo = verificarDaniosDisparo(disparo);
                     try {
-                        enviarMensaje(disparo);
+                        enviarMensaje(confirmacionDisparo);
                     } catch (IOException ex) {
-                        System.err.println("<C>Error al enviar confrmacion");
+                        System.err.println("<C>Error al enviar amenaza. Los enemigos no se asustaran...");
+                    }
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                        System.out.println("<C>Parece que el misil no llego al campo enemigo");
                     }
                     // Recibo y verifico mensaje derrota.
-                    System.out.println("<C>Verificando victoria o derrota...");
+                    System.out.println("<C>Verificando victoria o derrota de la flota...");
                     Mensaje respuesta = recibirMensaje();
-                    System.out.println("Recibido (V/D)" + respuesta);
+                    System.out.println("Recibido:" + respuesta);
                     // Si pierdo rompo ciclo turno = -1. Si no turno = 1;
-                    victoria = traducirMensaje(respuesta, 2);
-                    System.out.println("Derrota?" + victoria);
-                    if (victoria) {
+                    boolean derrota = traducirMensaje(respuesta, 2);
+                    System.out.println("¿Derrota?" + derrota);
+                    if (derrota) {
                         turno = -1;
+                        JOptionPane.showMessageDialog(tablero, "¡¡Has perdido esta Batalla!!");
                     } else {
                         turno = 1;
                     }
@@ -154,7 +150,7 @@ public class Cliente extends Thread {
     public void conectarAServidor() throws UnknownHostException, IOException {
         System.out.println("Conectando a servidor...");
         socketCliente = new Socket(InetAddress.getByName(ip), puerto);//InetAddress.getByName(ip), puerto);
-        System.out.println("[OK]");
+        System.out.print("[OK]");
     }
 
     /**
@@ -166,21 +162,34 @@ public class Cliente extends Thread {
         obos = new ObjectOutputStream(socketCliente.getOutputStream());
         obos.flush();
         obis = new ObjectInputStream(socketCliente.getInputStream());
-        System.out.println("[OK]");
+        System.out.print("[OK]");
+    }
+
+      /**
+     *
+     * @return
+     */
+    public ObjectOutputStream getObos() {
+        return obos;
     }
 
     /**
      *
-     * @param mensaje
-     * @throws IOException
+     * @return
      */
-    public void enviarMensaje(Mensaje mensaje) throws IOException {
-        System.out.println("Enviando mensaje...");
-        obos.writeObject((Object) mensaje);
-        obos.flush();
-        System.out.println("[OK]");
+    public ObjectInputStream getObis() {
+        return obis;
     }
 
+    
+    /**
+     *
+     * @param aThis
+     */
+    public void setTablero(Tablero aThis) {
+        this.tablero = aThis;
+    }
+    
     /**
      *
      * @return @throws IOException
@@ -194,6 +203,18 @@ public class Cliente extends Thread {
             System.out.println("[OK]");
             return 0;
         }
+    }
+    
+    /**
+     *
+     * @param mensaje
+     * @throws IOException
+     */
+    public void enviarMensaje(Mensaje mensaje) throws IOException {
+        System.out.println("Enviando...");
+        obos.writeObject((Object) mensaje);
+        obos.flush();
+        System.out.print("[OK]");
     }
 
     /**
@@ -216,24 +237,16 @@ public class Cliente extends Thread {
 
     /**
      *
-     * @param aThis
-     */
-    public void setTablero(Tablero aThis) {
-        this.tablero = aThis;
-    }
-
-    /**
-     *
      * @param x
      * @param y
      */
     public void disparar(int x, int y) {
-        System.out.println("<C>Creando disparo");
+        System.out.println("<C>Cargando y alineando misil...");
         Mensaje disparo = crearDisparo(x, y);
         try {
             enviarMensaje(disparo);
         } catch (IOException ex) {
-            System.out.println("<C>Error al disparar");
+            System.out.println("<C>¡Error al disparar!");
         }
         synchronized (tablero) {
             tablero.notifyAll();
@@ -254,7 +267,7 @@ public class Cliente extends Thread {
     private boolean traducirMensaje(Mensaje confirmacion, int tipoVerif) {
         int x, y;
         boolean resultado;
-
+        boolean banderaAcertado = confirmacion.getBanderaAcertado();
         if (tipoVerif == 1) { //Verificar victoria
             resultado = confirmacion.getBanderaVictoria();
         } else { //Verificar derrota
@@ -262,22 +275,28 @@ public class Cliente extends Thread {
         }
         x = confirmacion.getCoorX();
         y = confirmacion.getCoorY();
-
+		// Agregar llamada a actualizacion de botones en interfaz
+        
+        if(tipoVerif != 2){tablero.setCelda(x, y, banderaAcertado, 2);}
+        
         return resultado;
     }
 
-    private Mensaje traducirDisparo(Mensaje disparo) {
+    private Mensaje verificarDaniosDisparo(Mensaje disparo) {
         Mensaje confirmacion = new Mensaje();
         int x = disparo.getCoorX();
         int y = disparo.getCoorY();
         boolean banderaAcertado = false;
         String coordenada = x + "," + y;
         if (listaPosicionesBarcos.contains(coordenada)) {
+            System.out.println("Coordenada alcanzada por el enemigo: " + coordenada);
             banderaAcertado = true;
         }
         confirmacion.setCoorX(x);
         confirmacion.setCoorY(y);
         confirmacion.setBanderaAcertado(banderaAcertado);
+        // programacion para actualizar tablero propio
+	tablero.setCelda(x, y, banderaAcertado, 1);
         return confirmacion;
     }
 }//clase
