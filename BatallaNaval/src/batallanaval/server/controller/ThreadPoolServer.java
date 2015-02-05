@@ -11,31 +11,28 @@ import java.util.concurrent.Executors;
  *
  * @author Mario Cantellano
  */
-public class ThreadPoolServer{
+public class ThreadPoolServer {
 
-    protected int serverPort = 2222;
+    protected int serverPort;
     protected ServerSocket serverSocket = null;
     protected boolean isStopped = false;
-    protected Thread runningThread = null;
     protected ExecutorService threadPool = Executors.newFixedThreadPool(5);
-
+    
     public ThreadPoolServer(int port) {
-        this.serverPort = port;
+        this.serverPort = port;     
     }
-
+    
     public void run() {
-        synchronized (this) {
-            this.runningThread = Thread.currentThread();
-        }
+
         System.out.print("<s>Iniciando servidor...");
         openServerSocket();
         System.out.println("<s>[OK]");
-
+        Socket client1Socket;
+        Socket client2Socket;
         while (!isStopped()) {
-            Socket client1Socket = null;
-            Socket client2Socket = null;
             Partida partida = new Partida();
             try {
+                //System.out.println(threadPool);
                 System.out.print("<s>Esperando Jugador 1...");
                 client1Socket = this.serverSocket.accept();
                 partida.setJugador(client1Socket, 1);
@@ -44,16 +41,17 @@ public class ThreadPoolServer{
                 client2Socket = this.serverSocket.accept();
                 partida.setJugador(client2Socket, 2);
                 System.out.println("<s>[OK]");
-                System.out.println("<s>Jugadores completos [OK].Atendiendo partida...");
+                System.out.println("<s>Jugadores completos...[OK].");
+                System.out.print("<s>Atendiendo partida...");
                 threadPool.execute(partida);
-                System.out.println("<s>[OK]");
+                System.out.println("[OK]");                
             } catch (IOException e) {
                 if (isStopped()) {
                     System.out.println("<s>Server detenido.");
                     break;
                 }
                 throw new RuntimeException("<s>Error al establecer conexion con jugador ", e);
-            }
+            }    
         }
         this.threadPool.shutdown();
         System.out.println("<s>Servidor detenido.");
