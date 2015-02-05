@@ -20,7 +20,7 @@ public class Tablero extends javax.swing.JFrame {
 
     private Cliente cliente = null;
     private Tablero tablero;
-    
+
     public Tablero() {
         pilaDeSelecciones = new Stack();
         posicionesBarcos = new ArrayList<>();
@@ -28,16 +28,16 @@ public class Tablero extends javax.swing.JFrame {
         crearMatrizFlota(jPanel1, 1);
         crearMatrizFlota(jPanel3, 0);
     }
-    
-    public void arrancarTablero(){
+
+    public void arrancarTablero() {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Tablero().setVisible(true);
             }
         });
-    
+
     }
-    
+
     private void crearMatrizFlota(JPanel jpanel, int tipo) {
         jpanel.setLayout(new java.awt.GridLayout(15, 15));
         JButton[][] flota;
@@ -110,13 +110,14 @@ public class Tablero extends javax.swing.JFrame {
                     pilaDeSelecciones.push(posicion);
                     --barcosPendientes;
                     ++barcoListos;
-                    if(barcosPendientes==0){
+                    if (barcosPendientes == 0) {
                         botonBNivel2.setEnabled(true);
                     }
-                    
+
                 }
                 break;
             case 2:
+                System.out.println("1)Barcos pendientes: " + getBarcosPendientes() + " Celdas pendientes: " + celdasPendientes);
                 if (getBarcosPendientes() > 0) {
                     if (celdasPendientes == 2) {
                         System.out.println("Niv2-Posicion valida");
@@ -132,19 +133,26 @@ public class Tablero extends javax.swing.JFrame {
                                 posicionesBarcos.add(coorX + "," + coorY);
                                 pilaDeSelecciones.push(posicion);
                                 --celdasPendientes;
+                                --barcosPendientes;
+                                ++barcoListos;
+                                botonBNivel2.setEnabled(false);
+                                BotonSubmarino.setEnabled(true);
+                                setBarcoActivo(0);
                             }
-                        } else {
-                            --barcosPendientes;
-                            ++barcoListos;
-                        }
+                        } //else {
+//                            --barcosPendientes;
+//                            ++barcoListos;
+//                        }
                     }
                 } else {
                     botonBNivel2.setEnabled(false);
                     BotonSubmarino.setEnabled(true);
                     setBarcoActivo(0);
                 }
+                System.out.println("2)Barcos pendientes: " + getBarcosPendientes() + " Celdas pendientes: " + celdasPendientes);
                 break;
             case 3:
+                System.out.println("1)Submarinos pendientes: " + getBarcosPendientes() + " Celdas pendientes: " + celdasPendientes);
                 if (getBarcosPendientes() > 0) {
                     if (celdasPendientes == 3) {
                         System.out.println("Sub-Posicion valida");
@@ -161,18 +169,20 @@ public class Tablero extends javax.swing.JFrame {
                                 pilaDeSelecciones.push(posicion);
                                 --celdasPendientes;
                             }
-                        } else {
+                        } if(celdasPendientes == 0) {
                             --barcosPendientes;
                             ++barcoListos;
                         }
                     }
-                } else {
-                    BotonSubmarino.setEnabled(false);
+                } 
+                if(barcosPendientes == 0 && celdasPendientes ==0){  
+                BotonSubmarino.setEnabled(false);
                     setBarcoActivo(0);
                 }
+                System.out.println("2)Submarinos pendientes: " + getBarcosPendientes() + " Celdas pendientes: " + celdasPendientes);
                 break;
         }
-        if(barcoListos==totalDeBarcos){
+        if (barcoListos == totalDeBarcos) {
             botonListo.setEnabled(true);
         }
     }
@@ -186,7 +196,7 @@ public class Tablero extends javax.swing.JFrame {
         int[] posicion = {coorX, coorY};
         setPosicionActiva(posicion);
         botonesFlotaEnemiga[coorX][coorY].setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/pointer.png")));
-        
+
     }
 
     public void cambiarBloqueoDeBotones(int tablero, int tipoBloqueo) {
@@ -200,12 +210,12 @@ public class Tablero extends javax.swing.JFrame {
             for (int j = 0; j < flota[0].length; j++) {
                 if (tipoBloqueo == 0) {
                     flota[i][j].setEnabled(false);
-                    if(tablero == 2){
+                    if (tablero == 2) {
                         botonDisparar.setEnabled(false);
                     }
                 } else {
                     flota[i][j].setEnabled(true);
-                    if(tablero == 2){
+                    if (tablero == 2) {
                         botonDisparar.setEnabled(true);
                     }
                 }
@@ -350,8 +360,8 @@ public class Tablero extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonDispararActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonDispararActionPerformed
-        System.out.println("Objetivo fijado: " + posicionActiva[0] +","+ posicionActiva[1]);
-        cliente.disparar(posicionActiva[0],posicionActiva[1]);
+        System.out.println("Objetivo fijado: " + posicionActiva[0] + "," + posicionActiva[1]);
+        cliente.disparar(posicionActiva[0], posicionActiva[1]);
     }//GEN-LAST:event_botonDispararActionPerformed
 
     private void botonBNivel1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBNivel1ActionPerformed
@@ -379,12 +389,12 @@ public class Tablero extends javax.swing.JFrame {
     }//GEN-LAST:event_BotonSubmarinoActionPerformed
 
     private void botonListoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonListoActionPerformed
-        try{
-        cliente = new Cliente(2222,"localhost");
-        cliente.setTablero(this);
-        cliente.start();
-        botonListo.setEnabled(false);
-        }catch(Exception ex){
+        try {
+            cliente = new Cliente(2222, "localhost");
+            cliente.setTablero(this);
+            cliente.start();
+            botonListo.setEnabled(false);
+        } catch (Exception ex) {
             System.out.println(" Ocurrio una excepcion en el cliente. Puede que se haya cerado el Socket.");
         }
     }//GEN-LAST:event_botonListoActionPerformed
@@ -456,14 +466,14 @@ public class Tablero extends javax.swing.JFrame {
         return posicionesBarcos;
     }
 
-    public JButton[][] getCampo1(){
+    public JButton[][] getCampo1() {
         return botonesFlota;
     }
-    
-    public JButton[][] getCampo2(){
+
+    public JButton[][] getCampo2() {
         return botonesFlotaEnemiga;
     }
-    
+
     /**
      *
      * @param x
@@ -472,47 +482,44 @@ public class Tablero extends javax.swing.JFrame {
      * @param banderaDerribado
      */
     public void setCelda(int x, int y, boolean banderaAcertado, int tablero) {
-        if(banderaAcertado){
-            if(tablero == 1){
+        if (banderaAcertado) {
+            if (tablero == 1) {
                 getCampo1()[x][y].setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/bdr.png")));
-            }else{
+            } else {
                 getCampo2()[x][y].setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/img/skull.png")));
                 getCampo2()[x][y].setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/skull.png")));
                 getCampo2()[x][y].setEnabled(false);
             }
-        }else{
-            if(tablero == 1){
+        } else {
+            if (tablero == 1) {
                 getCampo1()[x][y].setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/danger.png")));
-            }else{
+            } else {
                 getCampo2()[x][y].setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/img/fail.png")));
                 getCampo2()[x][y].setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/fail.png")));
                 getCampo2()[x][y].setEnabled(false);
             }
         }
     }
-    
-    
-    public void setCliente(Cliente cliente){
+
+    public void setCliente(Cliente cliente) {
         this.cliente = cliente;
     }
-    
-    public Cliente getCliente(){
+
+    public Cliente getCliente() {
         return this.cliente;
     }
-    
+
     public void desbloquearBotonInicial() {
         botonBNivel1.setEnabled(true);
     }
-    
-    public Tablero getTablero(){
+
+    public Tablero getTablero() {
         return this.tablero;
     }
-    
-    
-    public void setBotonDispararDisabled(){
+
+    public void setBotonDispararDisabled() {
         botonDisparar.setEnabled(false);
     }
-    
     //------------------------------
     //-- Variables de declaración --
     //------------------------------
@@ -537,5 +544,4 @@ public class Tablero extends javax.swing.JFrame {
     private int barcosPendientes = 0; // barcos de un nivel, por colocar
     private int barcoListos = 0;
     private int celdasPendientes = 0; // barcos de un nivel, por colocar
-    
 }
