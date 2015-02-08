@@ -38,7 +38,7 @@ public class Utileria {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public static Object deseralizarObjeto(byte[] objBytes) throws IOException, ClassNotFoundException {
+    public static Object deserializarObjeto(byte[] objBytes) throws IOException, ClassNotFoundException {
         ByteArrayInputStream bais = new ByteArrayInputStream(objBytes);
         ObjectInputStream ois = new ObjectInputStream(bais);
         return ois.readObject();

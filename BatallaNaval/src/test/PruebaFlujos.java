@@ -13,7 +13,7 @@ public class PruebaFlujos {
     public static void main(String[] args) throws InterruptedException {
         //Cliente c = new Cliente(2222, "230.1.1.1");
         //Cliente c = new Cliente(3333, "127.0.0.1");
-        Cliente c = new Cliente(2222, "127.0.0.1");
+        Cliente c = new Cliente(2222,"127.0.0.1");
         try {
             c.conectarAServidor();
             c.inicializarFlujos();
