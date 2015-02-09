@@ -96,7 +96,7 @@ public class Tablero extends javax.swing.JFrame {
         int[] posicion = {coorX, coorY};
         int[] posicionanterior = new int[2];
         try {
-            posicionanterior = (int[]) pilaDeSelecciones.pop();
+            posicionanterior = (int[]) pilaDeSelecciones.peek();
         } catch (Exception e) {
         }
         int antX = posicionanterior[0];
@@ -228,13 +228,14 @@ public class Tablero extends javax.swing.JFrame {
         }
     }
 
-//    public static void main(String args[]) {
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                new Tablero().setVisible(true);
-//            }
-//        });
-//    }
+    public static void main(String args[]) {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new Tablero().setVisible(true);
+            }
+        });
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -242,12 +243,12 @@ public class Tablero extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         botonDisparar = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
         botonBNivel1 = new javax.swing.JToggleButton();
         botonBNivel2 = new javax.swing.JToggleButton();
         BotonSubmarino = new javax.swing.JToggleButton();
         botonListo = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Batalla Naval");
@@ -261,14 +262,13 @@ public class Tablero extends javax.swing.JFrame {
         jPanel3.setLayout(new java.awt.GridLayout(1, 0));
 
         botonDisparar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/1422930528_Bullet Bill.png"))); // NOI18N
+        botonDisparar.setToolTipText("<<DISPARAR>>");
         botonDisparar.setEnabled(false);
         botonDisparar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonDispararActionPerformed(evt);
             }
         });
-
-        jLabel1.setText("Disparar");
 
         botonBNivel1.setText("Barco Nivel 1");
         botonBNivel1.addActionListener(new java.awt.event.ActionListener() {
@@ -294,6 +294,7 @@ public class Tablero extends javax.swing.JFrame {
         });
 
         botonListo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/listo.png"))); // NOI18N
+        botonListo.setToolTipText("<<FLOTA LISTA>>");
         botonListo.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/img/pirate.png"))); // NOI18N
         botonListo.setEnabled(false);
         botonListo.addActionListener(new java.awt.event.ActionListener() {
@@ -302,32 +303,36 @@ public class Tablero extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setText("Listo");
+        jLabel3.setText("       0        1         2         3         4        5        6         7         8        9       10     11      12       13        14");
+
+        jLabel4.setText("       0        1         2         3         4        5        6         7         8        9       10     11      12       13        14");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(botonBNivel1)
-                            .addGap(18, 18, 18)
-                            .addComponent(botonBNivel2)
-                            .addGap(18, 18, 18)
-                            .addComponent(BotonSubmarino)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(botonListo, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jLabel2))
+                .addGap(27, 27, 27)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(botonBNivel1)
+                        .addGap(18, 18, 18)
+                        .addComponent(botonBNivel2)
+                        .addGap(18, 18, 18)
+                        .addComponent(BotonSubmarino)
+                        .addGap(47, 47, 47)
+                        .addComponent(botonListo, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(botonDisparar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addContainerGap(60, Short.MAX_VALUE))
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(botonDisparar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap(55, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -336,24 +341,23 @@ public class Tablero extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(3, 3, 3)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(botonDisparar, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
-                            .addComponent(botonListo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel1)))
+                            .addComponent(botonDisparar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(botonListo, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(28, 28, 28)
+                        .addGap(33, 33, 33)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(botonBNivel1)
                             .addComponent(botonBNivel2)
-                            .addComponent(BotonSubmarino))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                            .addComponent(BotonSubmarino))))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
 
         pack();
@@ -395,6 +399,7 @@ public class Tablero extends javax.swing.JFrame {
             cliente.start();
             botonListo.setEnabled(false);
         } catch (Exception ex) {
+            JOptionPane.showMessageDialog(rootPane, "Estado de Conexion: Desconectado");
             System.out.println(" Ocurrio una excepcion en el cliente. Puede que se haya cerado el Socket.");
         }
     }//GEN-LAST:event_botonListoActionPerformed
@@ -529,8 +534,8 @@ public class Tablero extends javax.swing.JFrame {
     private javax.swing.JToggleButton botonBNivel2;
     private javax.swing.JButton botonDisparar;
     private javax.swing.JButton botonListo;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     // End of variables declaration//GEN-END:variables

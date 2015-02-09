@@ -48,6 +48,7 @@ public class ThreadPoolServer{
                 System.out.println("<s>Jugadores completos [OK].Atendiendo partida...");
                 threadPool.execute(partida);
                 System.out.println("<s>[OK]");
+                System.out.println(threadPool);
             } catch (IOException e) {
                 if (isStopped()) {
                     System.out.println("<s>Server detenido.");

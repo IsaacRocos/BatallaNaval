@@ -25,6 +25,7 @@ public class Partida implements Runnable {
     private ObjectInputStream in_1, in_2 = null;
     private ObjectOutputStream out_1, out_2 = null;
     private boolean banderaEsperandoJugador = false;
+    private int numeroPartida;
 
     public Partida() {
         derribados1 = 0;
@@ -37,6 +38,8 @@ public class Partida implements Runnable {
         out_2 = null;
         banderaEsperandoJugador = true;
     }
+    
+    
 
     public void setJugador(Socket player, int numJugador) {
         System.out.println("<p>Inicializando elementos de partida para jugador nuevo...");
