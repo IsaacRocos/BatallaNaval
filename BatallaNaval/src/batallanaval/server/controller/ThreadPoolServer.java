@@ -1,61 +1,75 @@
 package batallanaval.server.controller;
 
 import batallanaval.server.model.Partida;
-import batallanaval.utileria.FinPartidaException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  *
  * @author Mario Cantellano
  */
-public class ThreadPoolServer{
-
-    protected int serverPort = 2222;
+public class ThreadPoolServer {
+    private static final int noDePartidas = 5;
+    protected int serverPort;
     protected ServerSocket serverSocket = null;
     protected boolean isStopped = false;
-    protected Thread runningThread = null;
-    protected ExecutorService threadPool = Executors.newFixedThreadPool(5);
-
+    ThreadPool threadPool;
+    Anunciador anunciador;
     public ThreadPoolServer(int port) {
         this.serverPort = port;
+        this.threadPool = new ThreadPool(noDePartidas);
+        this.anunciador = new Anunciador(serverPort, true);
     }
 
     public void run() {
-        synchronized (this) {
-            this.runningThread = Thread.currentThread();
-        }
+        // Inicia los hilos. 
+        threadPool.start();
+        anunciador.start();
+        
         System.out.print("<s>Iniciando servidor...");
         openServerSocket();
-        System.out.println("<s>[OK]");
-
+        System.out.println("[OK]");
+        
+        Socket client1Socket;
+        Socket client2Socket;
         while (!isStopped()) {
-            Socket client1Socket = null;
-            Socket client2Socket = null;
             Partida partida = new Partida();
             try {
-                System.out.print("<s>Esperando Jugador 1...");
-                client1Socket = this.serverSocket.accept();
-                partida.setJugador(client1Socket, 1);
-                System.out.println("<s>[OK]");
-                System.out.print("<s>Esperando Jugador 2...");
-                client2Socket = this.serverSocket.accept();
-                partida.setJugador(client2Socket, 2);
-                System.out.println("<s>[OK]");
-                System.out.println("<s>Jugadores completos [OK].Atendiendo partida...");
-                threadPool.execute(partida);
-                System.out.println("<s>[OK]");
-                System.out.println(threadPool);
+                //System.out.println(threadPool);
+
+                if (threadPool.isAviable()) {
+                    System.out.println("[ThreadPool Disponible]");
+                    anunciador.getAnuncio().setDisponible(true);
+                    anunciador.getAnuncio().setPuerto(serverPort);
+                    
+                    System.out.print("<s>Esperando Jugador 1...");
+                    client1Socket = this.serverSocket.accept();
+                    partida.setJugador(client1Socket, 1);
+                    System.out.println("<s>[OK]");
+                    
+                    System.out.print("<s>Esperando Jugador 2...");
+                    client2Socket = this.serverSocket.accept();
+                    partida.setJugador(client2Socket, 2);
+                    System.out.println("<s>[OK]");
+                    
+                    System.out.println("<s>Jugadores completos...[OK].");
+                    System.out.print("<s>Atendiendo partida...");
+                    threadPool.execute(partida);
+                    System.out.println("[OK]");
+                } else {
+                    System.out.println("[No disponible]");
+                    anunciador.getAnuncio().setPuerto(serverPort);
+                    anunciador.getAnuncio().setDisponible(false);
+                }
+
             } catch (IOException e) {
                 if (isStopped()) {
                     System.out.println("<s>Server detenido.");
                     break;
                 }
                 throw new RuntimeException("<s>Error al establecer conexion con jugador ", e);
-            }
+            } 
         }
         this.threadPool.shutdown();
         System.out.println("<s>Servidor detenido.");
