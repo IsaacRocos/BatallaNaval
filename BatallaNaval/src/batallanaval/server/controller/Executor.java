@@ -16,6 +16,7 @@ public class Executor extends Thread {
 
     @Override
     public void run() {
+        while(true){
         try {
             //System.out.println("ExecutorHilo: "+this.getName()+" Estado:"+ this.getState());
             // Estado es runnable.
@@ -25,6 +26,6 @@ public class Executor extends Thread {
         } catch (InterruptedException ex) {
             System.err.println("Interrupcion al obtener tarea de la cola.");;
         }
-    }
+    }}
     
 }

@@ -1,16 +1,23 @@
 package battallanaval.client.controller;
 
+import batallanaval.utileria.Anuncio;
 import batallanaval.utileria.Mensaje;
+import batallanaval.utileria.Utileria;
 import interfaz.Tablero;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.net.MulticastSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import test.PruebaAnunciador;
 
 /**
  *
@@ -20,14 +27,15 @@ public class Cliente extends Thread {
 
     private Socket socketCliente = null;
     private String ip = "";
-    private int puerto;
+    private int puertoGrupo;
     private ObjectOutputStream obos = null;
     private ObjectInputStream obis = null;
     private ByteArrayInputStream bais;
     private int turno;
     private ArrayList<String> listaPosicionesBarcos;
     private Tablero tablero;
-
+    static String group = "225.4.5.6";
+    private int puertoServidor;
     /**
      *
      * @param puerto
@@ -35,7 +43,7 @@ public class Cliente extends Thread {
      */
     public Cliente(int puerto, String ip) {
         this.tablero = null;
-        this.puerto = puerto;
+        this.puertoGrupo = puerto;
         this.ip = ip;
     }
 
@@ -43,6 +51,14 @@ public class Cliente extends Thread {
     @Override
     public void run() {
         try {
+            
+            System.out.println("Seleccionando entre servidores disponibles...");
+            if(buscarServidor()){
+                System.out.println("Conectado a servidor en puerto: " + puertoServidor);
+            }else{
+                System.out.println("Hay problemas para conectarse a algun servior...");
+                throw new RuntimeException("Sesion cerrada");
+            }
             //Conectarse al servidor.
             this.conectarAServidor();
         } catch (IOException ex) {
@@ -149,7 +165,7 @@ public class Cliente extends Thread {
      */
     public void conectarAServidor() throws UnknownHostException, IOException {
         System.out.println("Conectando a servidor...");
-        socketCliente = new Socket(InetAddress.getByName(ip), puerto);//InetAddress.getByName(ip), puerto);
+        socketCliente = new Socket(InetAddress.getByName(ip), puertoServidor);//InetAddress.getByName(ip), puerto);
         System.out.print("[OK]");
     }
 
@@ -299,5 +315,37 @@ public class Cliente extends Thread {
 	tablero.setCelda(x, y, banderaAcertado, 1);
         return confirmacion;
     }
+    
+    
+    private boolean buscarServidor(){
+       try {
+            Anuncio anuncio;
+            MulticastSocket ms = new MulticastSocket(puertoGrupo);
+            ms.joinGroup(InetAddress.getByName(group));
+            System.out.println("Conectado a grupo ..." + ms.getLocalPort() + " " + ms.getPort());
+            while(true){
+                System.out.println(".");
+                    byte buf[] = new byte[256];
+                    DatagramPacket pack = new DatagramPacket(buf, buf.length);
+                    ms.receive(pack);
+                    anuncio = (Anuncio) Utileria.deserializarObjeto(pack.getData());
+                    System.out.println("Servidorencontrado: " + anuncio);
+                    if(anuncio.getDisponible()){
+                        this.puertoServidor = anuncio.getPuerto();
+                        break;
+                    }else{
+                        System.out.println("NO");
+                    }
+            }
+            return true;
+        } catch (IOException ex) {
+            Logger.getLogger(PruebaAnunciador.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(PruebaAnunciador.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+    
 }//clase
 

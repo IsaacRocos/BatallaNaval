@@ -41,4 +41,8 @@ public class Anuncio implements Serializable {
         return "Anuncio{" + "puerto=" + puerto + ", bandera=" + disponible + '}';
     }
     
+    public boolean getDisponible(){
+        return this.disponible;
+    }
+    
 }

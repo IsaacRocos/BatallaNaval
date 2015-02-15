@@ -29,15 +29,11 @@ public class PruebaAnunciador {
             MulticastSocket ms = new MulticastSocket(port);
             ms.joinGroup(InetAddress.getByName(group));
             while(true){
-                    
-                    
                     byte buf[] = new byte[256];
-                    
                     DatagramPacket pack = new DatagramPacket(buf, buf.length);
                     ms.receive(pack);
                     anuncio = (Anuncio) Utileria.deserializarObjeto(pack.getData());
-                    System.out.println(anuncio);
-               
+                    System.out.println("Desde: " + ms.getLocalPort()+" Anuncio: "+ anuncio);
             }
         } catch (IOException ex) {
             Logger.getLogger(PruebaAnunciador.class.getName()).log(Level.SEVERE, null, ex);

@@ -32,7 +32,7 @@ public class Anunciador extends Thread {
             addr = InetAddress.getByName("225.4.5.6");
             //ms.joinGroup(InetAddress.getByName("localhost"));
         } catch (IOException ex) {
-
+            System.out.println("Error en anunciador");
         }
 
     }
@@ -42,7 +42,7 @@ public class Anunciador extends Thread {
         while (true) {
             try {
                 byte[] buf = Utileria.serailizarObjeto(anuncio);
-                DatagramPacket pack = new DatagramPacket(buf, buf.length, addr, 8888);
+                DatagramPacket pack = new DatagramPacket(buf, buf.length, addr, port);
                 ms.send(pack);
                 try {
                     this.sleep(5000);

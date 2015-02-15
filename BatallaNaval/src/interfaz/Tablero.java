@@ -394,7 +394,7 @@ public class Tablero extends javax.swing.JFrame {
 
     private void botonListoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonListoActionPerformed
         try {
-            cliente = new Cliente(2222, "localhost");
+            cliente = new Cliente(1111, "localhost");
             cliente.setTablero(this);
             cliente.start();
             botonListo.setEnabled(false);
